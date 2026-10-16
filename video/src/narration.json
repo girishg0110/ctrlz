@@ -1,0 +1,1341 @@
+{
+ "voice": "Eric",
+ "model": "eleven_multilingual_v2",
+ "scenes": [
+  {
+   "n": 1,
+   "title": "Cold open",
+   "text": "In July 2025, Replit's AI coding agent deleted a company's production database. It happened during a code freeze.",
+   "audio": "audio/scene-1.mp3",
+   "duration": 8.359,
+   "words": [
+    {
+     "w": "In",
+     "s": 0.046,
+     "e": 0.139
+    },
+    {
+     "w": "July",
+     "s": 0.186,
+     "e": 0.476
+    },
+    {
+     "w": "2025,",
+     "s": 0.569,
+     "e": 1.428
+    },
+    {
+     "w": "Replit's",
+     "s": 1.474,
+     "e": 1.916
+    },
+    {
+     "w": "AI",
+     "s": 2.032,
+     "e": 2.357
+    },
+    {
+     "w": "coding",
+     "s": 2.45,
+     "e": 2.775
+    },
+    {
+     "w": "agent",
+     "s": 2.833,
+     "e": 3.181
+    },
+    {
+     "w": "deleted",
+     "s": 3.564,
+     "e": 4.052
+    },
+    {
+     "w": "a",
+     "s": 4.11,
+     "e": 4.145
+    },
+    {
+     "w": "company's",
+     "s": 4.226,
+     "e": 4.632
+    },
+    {
+     "w": "production",
+     "s": 4.679,
+     "e": 5.085
+    },
+    {
+     "w": "database.",
+     "s": 5.132,
+     "e": 5.712
+    },
+    {
+     "w": "It",
+     "s": 6.223,
+     "e": 6.362
+    },
+    {
+     "w": "happened",
+     "s": 6.409,
+     "e": 6.699
+    },
+    {
+     "w": "during",
+     "s": 6.722,
+     "e": 6.954
+    },
+    {
+     "w": "a",
+     "s": 7.012,
+     "e": 7.036
+    },
+    {
+     "w": "code",
+     "s": 7.105,
+     "e": 7.372
+    },
+    {
+     "w": "freeze.",
+     "s": 7.419,
+     "e": 7.895
+    }
+   ]
+  },
+  {
+   "n": 2,
+   "title": "The problem",
+   "text": "Agents, like humans, often make mistakes. It's essential that those mistakes not reach your customers.",
+   "audio": "audio/scene-2.mp3",
+   "duration": 6.362,
+   "words": [
+    {
+     "w": "Agents,",
+     "s": 0.046,
+     "e": 0.557
+    },
+    {
+     "w": "like",
+     "s": 0.639,
+     "e": 0.836
+    },
+    {
+     "w": "humans,",
+     "s": 0.871,
+     "e": 1.347
+    },
+    {
+     "w": "often",
+     "s": 1.428,
+     "e": 1.73
+    },
+    {
+     "w": "make",
+     "s": 1.765,
+     "e": 1.916
+    },
+    {
+     "w": "mistakes.",
+     "s": 1.962,
+     "e": 2.624
+    },
+    {
+     "w": "It's",
+     "s": 2.949,
+     "e": 3.135
+    },
+    {
+     "w": "essential",
+     "s": 3.181,
+     "e": 3.622
+    },
+    {
+     "w": "that",
+     "s": 3.669,
+     "e": 3.796
+    },
+    {
+     "w": "those",
+     "s": 3.843,
+     "e": 4.11
+    },
+    {
+     "w": "mistakes",
+     "s": 4.145,
+     "e": 4.528
+    },
+    {
+     "w": "not",
+     "s": 4.586,
+     "e": 4.737
+    },
+    {
+     "w": "reach",
+     "s": 4.783,
+     "e": 4.957
+    },
+    {
+     "w": "your",
+     "s": 4.992,
+     "e": 5.085
+    },
+    {
+     "w": "customers.",
+     "s": 5.132,
+     "e": 5.828
+    }
+   ]
+  },
+  {
+   "n": 3,
+   "title": "The idea",
+   "text": "Ctrl+Z keeps agents away from production, the system your customers use. It copies that system into separate sandboxes, puts one agent in each, and tests changes in isolation. When a copy passes every check, the production system gets updated.",
+   "audio": "audio/scene-3.mp3",
+   "duration": 17.136,
+   "words": [
+    {
+     "w": "Ctrl+Z",
+     "s": 0.0,
+     "e": 0.592
+    },
+    {
+     "w": "keeps",
+     "s": 0.836,
+     "e": 1.091
+    },
+    {
+     "w": "agents",
+     "s": 1.149,
+     "e": 1.498
+    },
+    {
+     "w": "away",
+     "s": 1.544,
+     "e": 1.811
+    },
+    {
+     "w": "from",
+     "s": 1.881,
+     "e": 2.009
+    },
+    {
+     "w": "production,",
+     "s": 2.067,
+     "e": 2.786
+    },
+    {
+     "w": "the",
+     "s": 3.065,
+     "e": 3.17
+    },
+    {
+     "w": "system",
+     "s": 3.228,
+     "e": 3.529
+    },
+    {
+     "w": "your",
+     "s": 3.576,
+     "e": 3.692
+    },
+    {
+     "w": "customers",
+     "s": 3.75,
+     "e": 4.203
+    },
+    {
+     "w": "use.",
+     "s": 4.272,
+     "e": 4.795
+    },
+    {
+     "w": "It",
+     "s": 5.306,
+     "e": 5.457
+    },
+    {
+     "w": "copies",
+     "s": 5.515,
+     "e": 5.909
+    },
+    {
+     "w": "that",
+     "s": 5.956,
+     "e": 6.107
+    },
+    {
+     "w": "system",
+     "s": 6.177,
+     "e": 6.525
+    },
+    {
+     "w": "into",
+     "s": 6.571,
+     "e": 6.699
+    },
+    {
+     "w": "separate",
+     "s": 6.769,
+     "e": 7.14
+    },
+    {
+     "w": "sandboxes,",
+     "s": 7.175,
+     "e": 8.092
+    },
+    {
+     "w": "puts",
+     "s": 8.371,
+     "e": 8.58
+    },
+    {
+     "w": "one",
+     "s": 8.649,
+     "e": 8.8
+    },
+    {
+     "w": "agent",
+     "s": 8.835,
+     "e": 9.114
+    },
+    {
+     "w": "in",
+     "s": 9.16,
+     "e": 9.242
+    },
+    {
+     "w": "each,",
+     "s": 9.311,
+     "e": 9.729
+    },
+    {
+     "w": "and",
+     "s": 9.88,
+     "e": 10.066
+    },
+    {
+     "w": "tests",
+     "s": 10.136,
+     "e": 10.437
+    },
+    {
+     "w": "changes",
+     "s": 10.507,
+     "e": 11.006
+    },
+    {
+     "w": "in",
+     "s": 11.064,
+     "e": 11.134
+    },
+    {
+     "w": "isolation.",
+     "s": 11.204,
+     "e": 11.958
+    },
+    {
+     "w": "When",
+     "s": 12.655,
+     "e": 12.829
+    },
+    {
+     "w": "a",
+     "s": 12.864,
+     "e": 12.887
+    },
+    {
+     "w": "copy",
+     "s": 12.934,
+     "e": 13.224
+    },
+    {
+     "w": "passes",
+     "s": 13.282,
+     "e": 13.665
+    },
+    {
+     "w": "every",
+     "s": 13.723,
+     "e": 13.909
+    },
+    {
+     "w": "check,",
+     "s": 13.979,
+     "e": 14.455
+    },
+    {
+     "w": "the",
+     "s": 14.605,
+     "e": 14.71
+    },
+    {
+     "w": "production",
+     "s": 14.756,
+     "e": 15.174
+    },
+    {
+     "w": "system",
+     "s": 15.232,
+     "e": 15.499
+    },
+    {
+     "w": "gets",
+     "s": 15.558,
+     "e": 15.732
+    },
+    {
+     "w": "updated.",
+     "s": 15.778,
+     "e": 17.136
+    }
+   ]
+  },
+  {
+   "n": 4,
+   "title": "The setup",
+   "text": "Here is a small online store. Its orders page takes two seconds to load. We gave Ctrl+Z one instruction: the orders page is slow, fix it.",
+   "audio": "audio/scene-4.mp3",
+   "duration": 9.427,
+   "words": [
+    {
+     "w": "Here",
+     "s": 0.0,
+     "e": 0.186
+    },
+    {
+     "w": "is",
+     "s": 0.221,
+     "e": 0.279
+    },
+    {
+     "w": "a",
+     "s": 0.313,
+     "e": 0.348
+    },
+    {
+     "w": "small",
+     "s": 0.406,
+     "e": 0.72
+    },
+    {
+     "w": "online",
+     "s": 0.789,
+     "e": 1.149
+    },
+    {
+     "w": "store.",
+     "s": 1.184,
+     "e": 1.614
+    },
+    {
+     "w": "Its",
+     "s": 1.765,
+     "e": 1.927
+    },
+    {
+     "w": "orders",
+     "s": 1.985,
+     "e": 2.252
+    },
+    {
+     "w": "page",
+     "s": 2.299,
+     "e": 2.519
+    },
+    {
+     "w": "takes",
+     "s": 2.554,
+     "e": 2.752
+    },
+    {
+     "w": "two",
+     "s": 2.798,
+     "e": 2.972
+    },
+    {
+     "w": "seconds",
+     "s": 3.042,
+     "e": 3.39
+    },
+    {
+     "w": "to",
+     "s": 3.437,
+     "e": 3.506
+    },
+    {
+     "w": "load.",
+     "s": 3.576,
+     "e": 4.017
+    },
+    {
+     "w": "We",
+     "s": 4.83,
+     "e": 4.969
+    },
+    {
+     "w": "gave",
+     "s": 5.027,
+     "e": 5.236
+    },
+    {
+     "w": "Ctrl+Z",
+     "s": 5.271,
+     "e": 5.712
+    },
+    {
+     "w": "one",
+     "s": 5.956,
+     "e": 6.118
+    },
+    {
+     "w": "instruction:",
+     "s": 6.153,
+     "e": 6.769
+    },
+    {
+     "w": "the",
+     "s": 6.885,
+     "e": 6.978
+    },
+    {
+     "w": "orders",
+     "s": 7.047,
+     "e": 7.291
+    },
+    {
+     "w": "page",
+     "s": 7.326,
+     "e": 7.535
+    },
+    {
+     "w": "is",
+     "s": 7.558,
+     "e": 7.616
+    },
+    {
+     "w": "slow,",
+     "s": 7.674,
+     "e": 8.15
+    },
+    {
+     "w": "fix",
+     "s": 8.22,
+     "e": 8.452
+    },
+    {
+     "w": "it.",
+     "s": 8.522,
+     "e": 9.427
+    }
+   ]
+  },
+  {
+   "n": 5,
+   "title": "The fork",
+   "text": "Ctrl+Z makes three copies on Daytona and starts three agents. One is a careful database expert. One is allowed to rewrite the code. The third can act without any restraints.",
+   "audio": "audio/scene-5.mp3",
+   "duration": 12.771,
+   "words": [
+    {
+     "w": "Ctrl+Z",
+     "s": 0.0,
+     "e": 0.58
+    },
+    {
+     "w": "makes",
+     "s": 0.824,
+     "e": 1.033
+    },
+    {
+     "w": "three",
+     "s": 1.08,
+     "e": 1.335
+    },
+    {
+     "w": "copies",
+     "s": 1.393,
+     "e": 1.846
+    },
+    {
+     "w": "on",
+     "s": 1.916,
+     "e": 2.032
+    },
+    {
+     "w": "Daytona",
+     "s": 2.101,
+     "e": 2.647
+    },
+    {
+     "w": "and",
+     "s": 2.926,
+     "e": 3.123
+    },
+    {
+     "w": "starts",
+     "s": 3.181,
+     "e": 3.483
+    },
+    {
+     "w": "three",
+     "s": 3.553,
+     "e": 3.808
+    },
+    {
+     "w": "agents.",
+     "s": 3.855,
+     "e": 4.412
+    },
+    {
+     "w": "One",
+     "s": 5.016,
+     "e": 5.213
+    },
+    {
+     "w": "is",
+     "s": 5.248,
+     "e": 5.317
+    },
+    {
+     "w": "a",
+     "s": 5.364,
+     "e": 5.387
+    },
+    {
+     "w": "careful",
+     "s": 5.433,
+     "e": 5.759
+    },
+    {
+     "w": "database",
+     "s": 5.817,
+     "e": 6.316
+    },
+    {
+     "w": "expert.",
+     "s": 6.374,
+     "e": 6.931
+    },
+    {
+     "w": "One",
+     "s": 7.442,
+     "e": 7.616
+    },
+    {
+     "w": "is",
+     "s": 7.651,
+     "e": 7.721
+    },
+    {
+     "w": "allowed",
+     "s": 7.767,
+     "e": 8.022
+    },
+    {
+     "w": "to",
+     "s": 8.046,
+     "e": 8.092
+    },
+    {
+     "w": "rewrite",
+     "s": 8.173,
+     "e": 8.545
+    },
+    {
+     "w": "the",
+     "s": 8.568,
+     "e": 8.638
+    },
+    {
+     "w": "code.",
+     "s": 8.684,
+     "e": 9.114
+    },
+    {
+     "w": "The",
+     "s": 9.718,
+     "e": 9.857
+    },
+    {
+     "w": "third",
+     "s": 9.938,
+     "e": 10.252
+    },
+    {
+     "w": "can",
+     "s": 10.31,
+     "e": 10.461
+    },
+    {
+     "w": "act",
+     "s": 10.542,
+     "e": 10.786
+    },
+    {
+     "w": "without",
+     "s": 10.844,
+     "e": 11.192
+    },
+    {
+     "w": "any",
+     "s": 11.262,
+     "e": 11.471
+    },
+    {
+     "w": "restraints.",
+     "s": 11.552,
+     "e": 12.771
+    }
+   ]
+  },
+  {
+   "n": 6,
+   "title": "The checks",
+   "text": "Every copy faces the same four checks. Did we lose data? Does the page show the right orders? Is it at least twice as fast? And does a second model judge the change safe to ship?",
+   "audio": "audio/scene-6.mp3",
+   "duration": 12.585,
+   "words": [
+    {
+     "w": "Every",
+     "s": 0.046,
+     "e": 0.267
+    },
+    {
+     "w": "copy",
+     "s": 0.313,
+     "e": 0.604
+    },
+    {
+     "w": "faces",
+     "s": 0.685,
+     "e": 1.091
+    },
+    {
+     "w": "the",
+     "s": 1.161,
+     "e": 1.242
+    },
+    {
+     "w": "same",
+     "s": 1.289,
+     "e": 1.509
+    },
+    {
+     "w": "four",
+     "s": 1.556,
+     "e": 1.741
+    },
+    {
+     "w": "checks.",
+     "s": 1.811,
+     "e": 2.392
+    },
+    {
+     "w": "Did",
+     "s": 2.775,
+     "e": 2.926
+    },
+    {
+     "w": "we",
+     "s": 2.972,
+     "e": 3.042
+    },
+    {
+     "w": "lose",
+     "s": 3.111,
+     "e": 3.332
+    },
+    {
+     "w": "data?",
+     "s": 3.379,
+     "e": 3.947
+    },
+    {
+     "w": "Does",
+     "s": 4.272,
+     "e": 4.458
+    },
+    {
+     "w": "the",
+     "s": 4.481,
+     "e": 4.551
+    },
+    {
+     "w": "page",
+     "s": 4.586,
+     "e": 4.795
+    },
+    {
+     "w": "show",
+     "s": 4.841,
+     "e": 5.062
+    },
+    {
+     "w": "the",
+     "s": 5.12,
+     "e": 5.19
+    },
+    {
+     "w": "right",
+     "s": 5.236,
+     "e": 5.41
+    },
+    {
+     "w": "orders?",
+     "s": 5.457,
+     "e": 5.991
+    },
+    {
+     "w": "Is",
+     "s": 6.594,
+     "e": 6.734
+    },
+    {
+     "w": "it",
+     "s": 6.792,
+     "e": 6.85
+    },
+    {
+     "w": "at",
+     "s": 6.885,
+     "e": 6.943
+    },
+    {
+     "w": "least",
+     "s": 6.989,
+     "e": 7.163
+    },
+    {
+     "w": "twice",
+     "s": 7.187,
+     "e": 7.523
+    },
+    {
+     "w": "as",
+     "s": 7.546,
+     "e": 7.628
+    },
+    {
+     "w": "fast?",
+     "s": 7.709,
+     "e": 8.336
+    },
+    {
+     "w": "And",
+     "s": 8.661,
+     "e": 8.812
+    },
+    {
+     "w": "does",
+     "s": 8.882,
+     "e": 9.056
+    },
+    {
+     "w": "a",
+     "s": 9.091,
+     "e": 9.125
+    },
+    {
+     "w": "second",
+     "s": 9.183,
+     "e": 9.462
+    },
+    {
+     "w": "model",
+     "s": 9.509,
+     "e": 9.787
+    },
+    {
+     "w": "judge",
+     "s": 9.868,
+     "e": 10.182
+    },
+    {
+     "w": "the",
+     "s": 10.217,
+     "e": 10.31
+    },
+    {
+     "w": "change",
+     "s": 10.356,
+     "e": 10.716
+    },
+    {
+     "w": "safe",
+     "s": 10.751,
+     "e": 10.995
+    },
+    {
+     "w": "to",
+     "s": 11.029,
+     "e": 11.088
+    },
+    {
+     "w": "ship?",
+     "s": 11.157,
+     "e": 11.633
+    }
+   ]
+  },
+  {
+   "n": 7,
+   "title": "The catch",
+   "text": "The reckless agent made the page faster by deleting seventy-seven percent of the orders: a hundred and ninety-three million dollars of sales history. Ctrl+Z throws that copy away.",
+   "audio": "audio/scene-7.mp3",
+   "duration": 10.403,
+   "words": [
+    {
+     "w": "The",
+     "s": 0.046,
+     "e": 0.174
+    },
+    {
+     "w": "reckless",
+     "s": 0.244,
+     "e": 0.615
+    },
+    {
+     "w": "agent",
+     "s": 0.662,
+     "e": 0.975
+    },
+    {
+     "w": "made",
+     "s": 1.022,
+     "e": 1.173
+    },
+    {
+     "w": "the",
+     "s": 1.207,
+     "e": 1.277
+    },
+    {
+     "w": "page",
+     "s": 1.312,
+     "e": 1.567
+    },
+    {
+     "w": "faster",
+     "s": 1.625,
+     "e": 2.067
+    },
+    {
+     "w": "by",
+     "s": 2.125,
+     "e": 2.229
+    },
+    {
+     "w": "deleting",
+     "s": 2.287,
+     "e": 2.635
+    },
+    {
+     "w": "seventy-seven",
+     "s": 2.717,
+     "e": 3.32
+    },
+    {
+     "w": "percent",
+     "s": 3.379,
+     "e": 3.68
+    },
+    {
+     "w": "of",
+     "s": 3.704,
+     "e": 3.75
+    },
+    {
+     "w": "the",
+     "s": 3.773,
+     "e": 3.843
+    },
+    {
+     "w": "orders:",
+     "s": 3.901,
+     "e": 4.365
+    },
+    {
+     "w": "a",
+     "s": 4.609,
+     "e": 4.667
+    },
+    {
+     "w": "hundred",
+     "s": 4.737,
+     "e": 4.981
+    },
+    {
+     "w": "and",
+     "s": 5.004,
+     "e": 5.074
+    },
+    {
+     "w": "ninety-three",
+     "s": 5.132,
+     "e": 5.596
+    },
+    {
+     "w": "million",
+     "s": 5.642,
+     "e": 5.909
+    },
+    {
+     "w": "dollars",
+     "s": 5.956,
+     "e": 6.258
+    },
+    {
+     "w": "of",
+     "s": 6.304,
+     "e": 6.351
+    },
+    {
+     "w": "sales",
+     "s": 6.42,
+     "e": 6.722
+    },
+    {
+     "w": "history.",
+     "s": 6.769,
+     "e": 7.291
+    },
+    {
+     "w": "Ctrl+Z",
+     "s": 7.616,
+     "e": 8.231
+    },
+    {
+     "w": "throws",
+     "s": 8.382,
+     "e": 8.638
+    },
+    {
+     "w": "that",
+     "s": 8.673,
+     "e": 8.789
+    },
+    {
+     "w": "copy",
+     "s": 8.847,
+     "e": 9.137
+    },
+    {
+     "w": "away.",
+     "s": 9.195,
+     "e": 9.776
+    }
+   ]
+  },
+  {
+   "n": 8,
+   "title": "The fix",
+   "text": "The careful agent added two missing database indexes. The page now loads in one millisecond, and every order is still there. One click makes that copy the new production.",
+   "audio": "audio/scene-8.mp3",
+   "duration": 11.146,
+   "words": [
+    {
+     "w": "The",
+     "s": 0.046,
+     "e": 0.163
+    },
+    {
+     "w": "careful",
+     "s": 0.209,
+     "e": 0.557
+    },
+    {
+     "w": "agent",
+     "s": 0.615,
+     "e": 0.894
+    },
+    {
+     "w": "added",
+     "s": 0.952,
+     "e": 1.242
+    },
+    {
+     "w": "two",
+     "s": 1.3,
+     "e": 1.521
+    },
+    {
+     "w": "missing",
+     "s": 1.602,
+     "e": 1.927
+    },
+    {
+     "w": "database",
+     "s": 2.009,
+     "e": 2.508
+    },
+    {
+     "w": "indexes.",
+     "s": 2.577,
+     "e": 3.402
+    },
+    {
+     "w": "The",
+     "s": 4.005,
+     "e": 4.11
+    },
+    {
+     "w": "page",
+     "s": 4.168,
+     "e": 4.412
+    },
+    {
+     "w": "now",
+     "s": 4.458,
+     "e": 4.598
+    },
+    {
+     "w": "loads",
+     "s": 4.679,
+     "e": 4.934
+    },
+    {
+     "w": "in",
+     "s": 4.969,
+     "e": 5.039
+    },
+    {
+     "w": "one",
+     "s": 5.132,
+     "e": 5.294
+    },
+    {
+     "w": "millisecond,",
+     "s": 5.329,
+     "e": 6.06
+    },
+    {
+     "w": "and",
+     "s": 6.211,
+     "e": 6.362
+    },
+    {
+     "w": "every",
+     "s": 6.42,
+     "e": 6.606
+    },
+    {
+     "w": "order",
+     "s": 6.664,
+     "e": 6.873
+    },
+    {
+     "w": "is",
+     "s": 6.931,
+     "e": 6.989
+    },
+    {
+     "w": "still",
+     "s": 7.012,
+     "e": 7.198
+    },
+    {
+     "w": "there.",
+     "s": 7.245,
+     "e": 7.663
+    },
+    {
+     "w": "One",
+     "s": 8.266,
+     "e": 8.464
+    },
+    {
+     "w": "click",
+     "s": 8.51,
+     "e": 8.731
+    },
+    {
+     "w": "makes",
+     "s": 8.8,
+     "e": 8.986
+    },
+    {
+     "w": "that",
+     "s": 9.021,
+     "e": 9.16
+    },
+    {
+     "w": "copy",
+     "s": 9.218,
+     "e": 9.509
+    },
+    {
+     "w": "the",
+     "s": 9.555,
+     "e": 9.625
+    },
+    {
+     "w": "new",
+     "s": 9.671,
+     "e": 9.776
+    },
+    {
+     "w": "production.",
+     "s": 9.822,
+     "e": 10.449
+    }
+   ]
+  },
+  {
+   "n": 9,
+   "title": "How it's built",
+   "text": "Daytona runs every copy. Arize records each command, each model call and each verdict. Fireworks runs the agents.",
+   "audio": "audio/scene-9.mp3",
+   "duration": 7.941,
+   "words": [
+    {
+     "w": "Daytona",
+     "s": 0.0,
+     "e": 0.476
+    },
+    {
+     "w": "runs",
+     "s": 0.522,
+     "e": 0.743
+    },
+    {
+     "w": "every",
+     "s": 0.789,
+     "e": 0.975
+    },
+    {
+     "w": "copy.",
+     "s": 1.033,
+     "e": 1.544
+    },
+    {
+     "w": "Arize",
+     "s": 1.753,
+     "e": 2.125
+    },
+    {
+     "w": "records",
+     "s": 2.171,
+     "e": 2.485
+    },
+    {
+     "w": "each",
+     "s": 2.566,
+     "e": 2.763
+    },
+    {
+     "w": "command,",
+     "s": 2.81,
+     "e": 3.402
+    },
+    {
+     "w": "each",
+     "s": 3.576,
+     "e": 3.773
+    },
+    {
+     "w": "model",
+     "s": 3.831,
+     "e": 4.063
+    },
+    {
+     "w": "call",
+     "s": 4.122,
+     "e": 4.365
+    },
+    {
+     "w": "and",
+     "s": 4.423,
+     "e": 4.493
+    },
+    {
+     "w": "each",
+     "s": 4.528,
+     "e": 4.667
+    },
+    {
+     "w": "verdict.",
+     "s": 4.714,
+     "e": 5.294
+    },
+    {
+     "w": "Fireworks",
+     "s": 5.805,
+     "e": 6.339
+    },
+    {
+     "w": "runs",
+     "s": 6.397,
+     "e": 6.618
+    },
+    {
+     "w": "the",
+     "s": 6.676,
+     "e": 6.757
+    },
+    {
+     "w": "agents.",
+     "s": 6.827,
+     "e": 7.941
+    }
+   ]
+  },
+  {
+   "n": 10,
+   "title": "Close",
+   "text": "Agents make mistakes. With Ctrl+Z, your customers never see them.",
+   "audio": "audio/scene-10.mp3",
+   "duration": 4.226,
+   "words": [
+    {
+     "w": "Agents",
+     "s": 0.0,
+     "e": 0.418
+    },
+    {
+     "w": "make",
+     "s": 0.464,
+     "e": 0.615
+    },
+    {
+     "w": "mistakes.",
+     "s": 0.65,
+     "e": 1.277
+    },
+    {
+     "w": "With",
+     "s": 1.66,
+     "e": 1.846
+    },
+    {
+     "w": "Ctrl+Z,",
+     "s": 1.892,
+     "e": 2.566
+    },
+    {
+     "w": "your",
+     "s": 2.601,
+     "e": 2.717
+    },
+    {
+     "w": "customers",
+     "s": 2.763,
+     "e": 3.204
+    },
+    {
+     "w": "never",
+     "s": 3.297,
+     "e": 3.541
+    },
+    {
+     "w": "see",
+     "s": 3.599,
+     "e": 3.773
+    },
+    {
+     "w": "them.",
+     "s": 3.796,
+     "e": 4.226
+    }
+   ]
+  }
+ ]
+}
