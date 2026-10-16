@@ -5,7 +5,7 @@
 **Team name:** random deforestation
 **Team members:** _add names, emails and socials_
 **Repo:** https://github.com/girishg0110/ctrlz
-**Demo video:** _add the YouTube or Vimeo link after uploading `video/out/ctrlz-demo-final.mp4`_
+**Demo video:** https://youtu.be/nOBbAv2wf1o
 
 ---
 
