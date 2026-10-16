@@ -37,16 +37,16 @@ git clone https://github.com/girishg0110/ctrlz && cd ctrlz
 uv sync
 ```
 
-### Option A: offline, no accounts (2 minutes)
+### Option A: the demo, offline, no accounts (2 minutes)
 
-Sandboxes are local folders and the agents replay fixed command lists, so you can see
-the whole flow (fork tree, checks, verdicts, promotion) without any API keys.
+Sandboxes are local folders and the agents replay the scripts in the example config,
+so you can see the whole flow (fork tree, checks, verdicts, promotion) without API keys.
 
 ```bash
-CTRLZ_BACKEND=local CTRLZ_AGENT=scripted uv run ctrlz
+CTRLZ_BACKEND=local CTRLZ_AGENT=scripted uv run ctrlz serve
 ```
 
-### Option B: the real thing
+### Option B: the demo on Daytona with real agents
 
 Copy `.env.example` to `.env.local` and fill in:
 
@@ -56,46 +56,60 @@ Copy `.env.example` to `.env.local` and fill in:
 | `FIREWORKS_AI_API_KEY` | yes | [fireworks.ai](https://fireworks.ai) → API Keys |
 | `ARIZE_SPACE_ID`, `ARIZE_AI_API_KEY` | optional, for tracing | [app.arize.com](https://app.arize.com) → Space Settings |
 
-Then:
-
 ```bash
-uv run python scripts/smoke_daytona.py   # optional: checks your Daytona account works
-uv run ctrlz
+uv run ctrlz serve                        # dashboard at http://localhost:7860
+uv run ctrlz run "The orders page is slow. Fix it."   # or headless, prints a report
 ```
 
-### Using the dashboard
+In the dashboard: **Start production sandbox**, then **Fork & run**. Click any branch to see
+its agent's commands, its checks, the judge's verdict and its live app. **Promote to
+production** on a passing branch; the next task forks from there. **Download patch**
+gives you that fork's code changes.
 
-1. Open http://localhost:7860 (or set `PORT`) and click **Start production sandbox** (about 20 s).
-2. Keep the task or type your own, then click **Fork & run**. Expect 1–2 minutes.
-3. Click any branch to see its agent's commands, its checks and the judge's verdict, and to open that fork's live store on the left.
-4. Click **Promote to production** on a passing branch. The next task forks from the new production.
+## Use it on your own project
 
-Stopping the server deletes every sandbox it created (set `CTRLZ_KEEP_SANDBOXES=1` to keep them).
-Each run uses three short-lived sandboxes and a handful of model calls.
-
-To run once without the browser and print every agent's commands and verdicts:
+Ctrl+Z is driven by a `ctrlz.toml` that says what production is, how to run it, and what
+must not break. [`examples/acme-store/ctrlz.toml`](examples/acme-store/ctrlz.toml) is the
+demo's config, commented line by line.
 
 ```bash
-uv run python scripts/run_once.py
+cd your-project
+uv run --project /path/to/ctrlz ctrlz init      # writes a starter ctrlz.toml
+# edit it, then:
+uv run --project /path/to/ctrlz ctrlz run "Add caching to the /search endpoint"
+uv run --project /path/to/ctrlz ctrlz clean    # delete leftover sandboxes if a server was killed
 ```
+
+What goes in the config:
+
+- **`[source]`**: a local folder (`dir`) or a repo (`git`, `branch`) to put in the production sandbox.
+- **`[app]`**: `setup` (install, seed data), `start` (must listen on `$APP_PORT`), `port`, a `health` path, and a `description` the agents read.
+- **`[[agents.persona]]`**: one fork per persona. Each has a `style` that steers how its agent works. Set `scripted = true` with a `script` list to make a chaos agent that always runs fixed (e.g. destructive) commands, to prove your checks catch it.
+- **`[[check]]`**: shell commands that run in production (for a baseline) and in every fork. A check passes on exit code 0. With `compare`, the JSON it prints on its last line is compared with production's: `equal` (nothing may change, e.g. row counts), `no_decrease`, `no_increase`, or `faster` with a `factor` (e.g. latency must halve). Check scripts in `checks_dir` are uploaded fresh at check time, so agents can't edit them.
+- **`[diff] ignore`**: files left out of patches (data, logs).
+
+A fork is kept only if every check passes and the LLM judge (which sees the commands, the
+diff and the check results) says keep. Every fork's `changes.patch`, `commands.sh` and
+`verdict.json` are written to `.ctrlz/runs/<run>/<persona>/`, so you can apply the winning
+change to your real system yourself. Ctrl+Z never touches anything outside its sandboxes.
 
 ### Settings
 
 | Variable | Default | Effect |
 |---|---|---|
+| `CTRLZ_CONFIG` | `./ctrlz.toml`, else the example | Config file (or pass it as an argument). |
 | `CTRLZ_SNAPSHOT` | `daytona-small` | Daytona snapshot. Use `daytona-vm-small` if your org has Linux VM sandboxes, to get native `sandbox.fork()` (disk + memory). |
+| `CTRLZ_BACKEND` | `daytona` | `local` runs sandboxes as temp folders on your machine. |
+| `CTRLZ_AGENT` | `llm` | `scripted` replays each persona's `script` instead of calling a model. |
 | `CTRLZ_MODEL` | `accounts/fireworks/routers/kimi-k3-fast` | Agent model (any Fireworks model with tool calling). |
 | `CTRLZ_JUDGE_MODEL` | same as agent | Judge model (needs JSON-schema output). |
-| `CTRLZ_MAX_TURNS` | `10` | Turn limit per agent. |
+| `CTRLZ_MAX_TURNS` | from config, else `10` | Turn limit per agent. |
+| `CTRLZ_OUT` | `.ctrlz/runs` | Where patches and verdicts go. |
+| `CTRLZ_KEEP_SANDBOXES` | unset | `1` keeps sandboxes when the server stops. |
 | `ARIZE_PROJECT_NAME` | `ctrlz` | Arize project for traces. |
 
-### Adapting it to your own system
-
-Right now the "production" system is the demo store in `demo_app/`, and the checks in
-`src/ctrlz/check_script.py` and `src/ctrlz/evals.py` are written for it. To guard a
-different service: put its code in `demo_app/` (with a `seed.py` that sets up data and a
-`server.py` to run), then rewrite the checks to measure what must not break for it.
-The agent styles live in `PERSONAS` in `src/ctrlz/agent.py`.
+`uv run python scripts/smoke_daytona.py [ctrlz.toml]` checks that your Daytona account can
+create, boot, fork and preview your app.
 
 ### Rebuilding the demo video
 
@@ -109,22 +123,24 @@ GarageBand's Apple Loops. Then `cd video && npm install && npm run render`.
 | Tool | Role |
 |---|---|
 | **Daytona** | Production and every branch are sandboxes. On Linux VM sandboxes, `sandbox.fork()` copies disk **and memory** in under a second, so the running server carries on in each fork. Container sandboxes fall back to copying files into fresh sandboxes. Live previews of each fork come through `get_preview_link`. |
-| **Arize AX** | One trace per run. Each branch is an AGENT span containing the LLM spans (OpenInference OpenAI auto-instrumentation) and a TOOL span for every shell command. An EVALUATOR span records `eval.integrity`, `eval.correctness`, `eval.speed` and `eval.judge` labels with explanations. |
+| **Arize AX** | One trace per run. Each branch is an AGENT span containing the LLM spans (OpenInference OpenAI auto-instrumentation) and a TOOL span for every shell command. An EVALUATOR span records an `eval.<check>` label and explanation for every check, plus `eval.judge`. |
 | **Fireworks AI** (Kimi K3) | Runs the agent in each fork (bash tool calling) and acts as the release-gate judge (JSON-schema output), via the OpenAI-compatible API. |
 
 ## Layout
 
 ```
-demo_app/            the "production" store (stdlib only): server.py, seed.py
+examples/acme-store/   the demo project: ctrlz.toml, app/ (the store), checks/
 src/ctrlz/
-  boxes.py           Daytona / local sandbox backends, fork + copy-fork
-  llm.py             Fireworks client (OpenAI-compatible)
-  agent.py           bash-tool agent loop per fork, engineering styles
-  evals.py           integrity / correctness / speed gates + LLM judge -> Arize
-  check_script.py    measurement harness uploaded fresh into each fork
-  orchestrator.py    fork -> run agents in parallel -> evaluate -> recommend -> promote
-  web.py, static/    FastAPI + fork-tree dashboard
+  config.py            loads ctrlz.toml
+  boxes.py             Daytona / local sandbox backends, fork + copy-fork, git baseline and diffs
+  llm.py               Fireworks client (OpenAI-compatible)
+  agent.py             bash-tool agent loop per fork
+  evals.py             runs the config's checks, compares with production, LLM judge -> Arize
+  orchestrator.py      fork -> run agents in parallel -> check -> recommend -> promote; saves patches
+  web.py, static/      FastAPI + fork-tree dashboard
+  __init__.py          CLI: ctrlz init | serve | run
 scripts/smoke_daytona.py   checks an account can create, boot, fork and preview
+video/                 the demo video (Remotion)
 ```
 
 ## License

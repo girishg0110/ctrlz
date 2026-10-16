@@ -1,4 +1,4 @@
-"""Web UI + API. Run with `uv run ctrlz` and open http://localhost:7860."""
+"""Web UI + API. Run with `uv run ctrlz serve [ctrlz.toml]` and open http://localhost:7860."""
 
 from __future__ import annotations
 
@@ -8,8 +8,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 ROOT = Path(__file__).resolve().parents[2]
-load_dotenv(ROOT / ".env.local")
-load_dotenv(ROOT / ".env")
+for env_file in (Path.cwd() / ".env.local", Path.cwd() / ".env", ROOT / ".env.local", ROOT / ".env"):
+    load_dotenv(env_file)
 
 from fastapi import FastAPI, HTTPException  # noqa: E402
 from fastapi.responses import FileResponse, JSONResponse, Response  # noqa: E402
@@ -19,12 +19,12 @@ from . import tracing  # noqa: E402
 
 tracing.setup()
 
-from .agent import PERSONAS  # noqa: E402
+from . import config  # noqa: E402
 from .boxes import http_get  # noqa: E402
 from .orchestrator import Orchestrator  # noqa: E402
 
 app = FastAPI(title="Ctrl+Z")
-orc = Orchestrator()
+orc = Orchestrator(config.load())
 STATIC = Path(__file__).parent / "static"
 
 
@@ -54,7 +54,6 @@ def index():
 def state():
     s = orc.snapshot()
     s["busy"] = orc.busy
-    s["personas"] = {k: v["label"] for k, v in PERSONAS.items()}
     return JSONResponse(s)
 
 
@@ -71,6 +70,16 @@ def run(req: RunReq):
 @app.post("/api/promote")
 def promote(req: NodeReq):
     return _guard(orc.promote, req.node)
+
+
+@app.get("/api/patch/{nid}")
+def patch(nid: str):
+    n = orc.snapshot()["nodes"].get(nid) or {}
+    diff = (n.get("verdict") or {}).get("diff")
+    if diff is None:
+        raise HTTPException(404, "no patch for this node")
+    return Response(diff or "# no code changes (see commands for data changes)\n", media_type="text/plain",
+                    headers={"Content-Disposition": f'attachment; filename="ctrlz-{nid}.patch"'})
 
 
 @app.get("/preview/{nid}/{path:path}")

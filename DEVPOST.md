@@ -23,16 +23,16 @@ In our demo, the task is "The orders page is slow. Fix it." on a store with 200,
 
 - **Careful DBA** adds two missing indexes. The page goes from 2,075 ms to 1 ms with no data lost. Ctrl+Z recommends it.
 - **App-level rewrite** rewrites the query and adds a short cache. It passes too, but the judge flags that the cache can show slightly stale orders.
-- **Aggressive cleanup** was told to act recklessly. It speeds the page up by deleting 154,150 orders (77%) and $193M of sales history. Ctrl+Z discards it, and production never changes.
+- **Aggressive cleanup** was told to act recklessly (in the live dashboard it is a scripted chaos agent, because Kimi K3 now refuses the destructive playbook). It speeds the page up by deleting 154,150 orders (77%) and $193M of sales history. Ctrl+Z discards it, and production never changes.
 
-Anyone handing real systems to agents could use this, for database migrations, dependency upgrades, infrastructure changes or data cleanups.
+Anyone handing real systems to agents could use this, for database migrations, dependency upgrades, infrastructure changes or data cleanups. Ctrl+Z is a reusable tool: a `ctrlz.toml` describes any project (where its code comes from, how to set it up and start it, the agent personas, and the checks that must pass), and `ctrlz run "task"` or the dashboard does the rest, writing the winning fork's patch to disk.
 
 ## How it works (architecture)
 
 1. **Production sandbox.** The store (a Python web server with a 1.1M-row SQLite database) runs in a Daytona sandbox. No agent ever runs here.
 2. **Fork.** For each task, Ctrl+Z forks production into one sandbox per agent. On Daytona Linux VM sandboxes it uses `sandbox.fork()`, which copies disk and memory in under a second. Our account only had container sandboxes, so Ctrl+Z falls back to copying production's files into pre-created spare sandboxes, which takes about 18 seconds for three copies.
 3. **Agents.** Each copy gets an agent (Kimi K3 on Fireworks AI) with a bash tool that runs commands inside that copy's sandbox. The agents share the same task but have different working styles, so their approaches differ.
-4. **Checks.** When an agent finishes, Ctrl+Z uploads a fresh test script into its copy, so the agent can't tamper with it, and runs four checks:
+4. **Checks.** The project's config lists checks as shell commands (test suites, data queries, benchmarks). Each runs in production for a baseline and in every fork; the numbers are compared with production by rule (`equal`, `no_decrease`, `no_increase`, `faster` by a factor). Check scripts are uploaded fresh into each fork, so agents can't tamper with them. The demo's four checks:
    - **Integrity:** no orders, items or revenue lost compared with production.
    - **Correctness:** the dashboard shows the same 40 orders and item counts as an independent query.
    - **Speed:** the orders page is at least twice as fast.
@@ -40,7 +40,9 @@ Anyone handing real systems to agents could use this, for database migrations, d
 5. **Promote.** Ctrl+Z recommends the passing copy the judge trusts most. One click makes it the new production, and the other copies are deleted. Later tasks copy from the new production, so the history forms a tree.
 6. **Tracing.** Every run is one trace in Arize, from the run down to each model call, shell command and verdict.
 
-**Components:** Python, FastAPI and a vanilla JS dashboard (fork tree, live agent logs, verdicts, and a live view of any copy's store through a preview proxy); `boxes.py` (Daytona backend with native fork and copy fallback); `agent.py` (agent loop); `evals.py` and `check_script.py` (checks and judge); `orchestrator.py` (copy, run, evaluate, promote).
+7. **Output.** Every fork's code diff (`changes.patch`), the commands its agent ran (`commands.sh`) and its verdict are saved, so the winning change can be applied to the real system.
+
+**Components:** Python, FastAPI and a vanilla JS dashboard (fork tree, live agent logs, verdicts, patch download, and a live view of any fork's app through a preview proxy); a CLI (`ctrlz init | serve | run | clean`); `config.py` (project config); `boxes.py` (Daytona backend with native fork and copy fallback, git baseline and diffs); `agent.py` (agent loop); `evals.py` (config-driven checks and judge); `orchestrator.py` (fork, run, evaluate, promote).
 
 ## Sponsor tools and how we used them
 
@@ -56,5 +58,5 @@ python, fastapi, daytona, arize, openinference, opentelemetry, fireworks-ai, kim
 ## What's next
 
 - Native memory forks on Daytona VM sandboxes, so copies take under a second and keep running processes.
-- Checks defined per task (test suites, data diffs, cost limits) instead of fixed for one demo.
+- Open the winning fork's change as a pull request automatically.
 - A safety mode that blocks known-destructive commands before they run, on top of judging afterwards.

@@ -80,12 +80,12 @@ iframe { flex: 1; border: 0; background: #f6f7f9; width: 100%; }
 <body>
 <header>
   <div class="logo">Ctrl<span>+</span>Z</div>
-  <div class="tag">Agents act in forks. Production only moves to a fork that passed.</div>
+  <div class="tag"><b id="project" style="color:var(--text)"></b> · Agents act in forks. Production only moves to a fork that passed.</div>
   <div class="badges" id="badges"></div>
 </header>
 <div class="taskbar">
   <button class="ghost" id="setupBtn">Start production sandbox</button>
-  <input id="task" value="The orders page is slow. Fix it." spellcheck="false">
+  <input id="task" value="" spellcheck="false">
   <button class="primary" id="runBtn">Fork &amp; run</button>
   <div class="status" id="status">idle</div>
 </div>
@@ -119,6 +119,8 @@ $("setupBtn").onclick = () => post("/api/setup");
 $("runBtn").onclick = () => { selected = null; post("/api/run", { task: $("task").value }); };
 $("backBtn").onclick = () => { selected = S && S.main; render(); };
 
+function fmt(x) { return Math.abs(x) >= 100 ? Math.round(x).toLocaleString() : (+x.toFixed(2)).toString(); }
+let taskSet = false;
 function esc(s) { return String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
 
 function layout(nodes) {
@@ -157,8 +159,10 @@ function renderTree() {
     const faded = ["discarded", "superseded"].includes(n.status);
     const live = ["forking", "running", "evaluating"].includes(n.status);
     const v = n.verdict && n.verdict.gates;
-    const sub = n.status === "main" ? (S.baseline ? `PRODUCTION · ${Math.round(S.baseline.latency_ms)} ms` : "PRODUCTION")
-      : v ? `${n.status.toUpperCase()} · ${v.speed.speedup}x` : n.status.toUpperCase();
+    const hg = v && v.find(g => g.name === S.headline && g.ratio !== undefined);
+    const hv = n.status === "main" ? S.baseline_headline : null;
+    const sub = n.status === "main" ? (hv !== null && hv !== undefined ? `PRODUCTION · ${fmt(hv)}` : "PRODUCTION")
+      : v ? `${n.status.toUpperCase()} · ${hg ? hg.ratio + "x" : v.filter(g => g.pass).length + "/" + v.length + " checks"}` : n.status.toUpperCase();
     out += `<g class="node ${selected === n.id ? "selected" : ""} ${live ? "pulsing" : ""}" data-id="${n.id}" opacity="${faded ? .45 : 1}">
       <rect x="${x}" y="${y}" width="${W}" height="${H}" rx="10" fill="var(--panel2)" stroke="${c}"/>
       <rect x="${x}" y="${y}" width="5" height="${H}" rx="2" fill="${c}"/>
@@ -187,22 +191,23 @@ function renderDetail() {
     <div class="big">${esc(n.label)}</div><div class="muted" style="font:11px var(--mono)">${esc(n.sandbox_id || "")}</div>`;
   const v = n.verdict;
   if (v && v.gates) {
-    const g = v.gates;
-    h += ["integrity", "correctness", "speed"].map(k => `<div class="gate"><div class="dot" style="background:${g[k].pass ? "var(--green)" : "var(--red)"}">${g[k].pass ? "✓" : "✕"}</div>
-      <div><div class="name">${k[0].toUpperCase() + k.slice(1)}</div><div class="d">${esc(g[k].detail)}</div></div></div>`).join("");
+    h += v.gates.map(g => `<div class="gate"><div class="dot" style="background:${g.pass ? "var(--green)" : "var(--red)"}">${g.pass ? "✓" : "✕"}</div>
+      <div><div class="name">${esc(g.name)}</div><div class="d">${esc(g.detail)}</div></div></div>`).join("");
     h += `<div class="judge"><div class="muted" style="font-size:12px">LLM JUDGE · ${esc(S.judge_model)} · score ${v.judge.score}</div>
       <div class="v" style="color:${v.keep ? "var(--green)" : "var(--red)"}">${v.keep ? "KEEP" : "DISCARD"}</div>
       <div class="r">${esc(v.judge.risk)}</div><div>${esc(v.judge.explanation)}</div></div>`;
     if (S.arize && n.trace_id) h += `<div class="muted" style="margin-top:10px;font:11px var(--mono)">Arize trace ${n.trace_id.slice(0, 16)}…</div>`;
     if (n.status === "pass") h += `<button class="good" style="margin-top:14px;width:100%" onclick="post('/api/promote',{node:'${n.id}'})">Promote to production</button>`;
+    if (n.persona && v.diff !== undefined) h += `<a class="ghost" style="display:block;text-align:center;margin-top:8px;padding:8px;border:1px solid var(--line);border-radius:8px;color:var(--dim);text-decoration:none" href="/api/patch/${n.id}">Download patch</a>`;
   } else if (v && v.error) {
     h += `<div class="judge"><div class="v" style="color:var(--red)">ERROR</div><div>${esc(v.error)}</div></div>`;
   } else if (n.status === "main" && S.baseline) {
-    const b = S.baseline;
-    h += `<div class="gate"><div><div class="name">Orders page</div><div class="d">${Math.round(b.latency_ms)} ms</div></div></div>
-      <div class="gate"><div><div class="name">Data</div><div class="d">${(b.orders || 0).toLocaleString()} orders · ${(b.items || 0).toLocaleString()} items</div></div></div>`;
+    h += `<div class="muted" style="margin-top:12px;font-size:12px">BASELINE CHECKS</div>` + Object.entries(S.baseline).map(([name, r]) => {
+      const m = Object.entries(r.metrics || {}).map(([k, x]) => `${k} ${fmt(x)}`).join(" · ");
+      return `<div class="gate"><div><div class="name">${esc(name)}</div><div class="d">${esc(m || r.detail || "passes")}</div></div></div>`;
+    }).join("");
   } else if (n.status !== "main") {
-    h += `<div class="judge muted">${n.status === "evaluating" ? "Evaluating: integrity, correctness, speed, then the judge…" : "Agent working in this fork…"}</div>`;
+    h += `<div class="judge muted">${n.status === "evaluating" ? `Running checks: ${esc((S.checks || []).join(", "))}, then the judge…` : "Agent working in this fork…"}</div>`;
   }
   if (h !== lastVerdict) { lastVerdict = h; $("verdict").innerHTML = h; }
 }
@@ -226,6 +231,8 @@ function render() {
     + (S.native_fork === null ? "" : `<span class="badge ${S.native_fork ? "on" : "warn"}">${S.native_fork ? "fork: disk + memory" : "fork: files only"}</span>`)
     + `<span class="badge ${S.arize ? "on" : "warn"}">${S.arize ? "Arize: " + esc(S.arize_project) : "Arize: off"}</span>`;
   $("status").textContent = S.busy ? S.status + "…" : S.status;
+  if (!taskSet && S.task !== undefined) { $("task").value = S.task; taskSet = true; }
+  $("project").textContent = S.project || "";
   $("setupBtn").style.display = S.main ? "none" : "";
   $("setupBtn").disabled = S.busy;
   $("runBtn").disabled = S.busy || !S.main;
