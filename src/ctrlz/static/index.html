@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ctrl+Z</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0b0d12; --panel: #12151c; --panel2: #171b24; --line: #232836; --text: #e6e8ee; --dim: #8a90a2;
+  --blue: #5b8cff; --green: #2fbf71; --red: #ef5a5a; --amber: #f2b33d; --purple: #a57bff; --gray: #4a5063;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 Inter, system-ui, sans-serif; display: flex; flex-direction: column; }
+button { font: inherit; cursor: pointer; border: 0; border-radius: 8px; padding: 9px 16px; font-weight: 600; }
+button:disabled { opacity: .45; cursor: default; }
+.primary { background: var(--blue); color: #fff; }
+.good { background: var(--green); color: #04150b; }
+.ghost { background: transparent; color: var(--dim); border: 1px solid var(--line); }
+
+header { display: flex; align-items: center; gap: 18px; padding: 14px 20px; border-bottom: 1px solid var(--line); }
+.logo { font-weight: 700; font-size: 20px; letter-spacing: -.02em; }
+.logo span { color: var(--blue); }
+.tag { color: var(--dim); font-size: 13px; }
+.badges { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
+.badge { font: 500 11.5px var(--mono); padding: 4px 9px; border-radius: 99px; background: var(--panel2); border: 1px solid var(--line); color: var(--dim); }
+.badge.on { color: var(--green); border-color: #2fbf7144; }
+.badge.warn { color: var(--amber); border-color: #f2b33d44; }
+
+.taskbar { display: flex; gap: 10px; padding: 12px 20px; border-bottom: 1px solid var(--line); align-items: center; }
+.taskbar input { flex: 1; background: var(--panel); border: 1px solid var(--line); color: var(--text); border-radius: 8px; padding: 10px 14px; font: 15px Inter, sans-serif; }
+.status { font: 500 12px var(--mono); color: var(--dim); min-width: 120px; text-align: right; }
+
+main { flex: 1; display: grid; grid-template-columns: minmax(380px, 42%) 1fr; min-height: 0; }
+.left { border-right: 1px solid var(--line); display: flex; flex-direction: column; min-height: 0; }
+.right { display: grid; grid-template-rows: minmax(220px, 44%) 1fr; min-height: 0; }
+.panelhead { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid var(--line); font-size: 12px; color: var(--dim); text-transform: uppercase; letter-spacing: .06em; }
+.panelhead b { color: var(--text); text-transform: none; letter-spacing: 0; font-size: 14px; }
+.panelhead .sp { margin-left: auto; }
+iframe { flex: 1; border: 0; background: #f6f7f9; width: 100%; }
+.empty { flex: 1; display: grid; place-items: center; color: var(--dim); text-align: center; padding: 30px; }
+
+#tree { width: 100%; height: 100%; display: block; }
+.treewrap { position: relative; border-bottom: 1px solid var(--line); min-height: 0; overflow: auto; }
+.node rect { stroke-width: 1.5; }
+.node text { font: 600 12.5px Inter, sans-serif; fill: var(--text); pointer-events: none; }
+.node .sub { font: 500 10.5px var(--mono); fill: var(--dim); }
+.node { cursor: pointer; }
+.node.selected rect { stroke: #fff !important; stroke-width: 2.5; }
+.edge { fill: none; stroke: var(--line); stroke-width: 2; }
+.edge.live { stroke: var(--amber); stroke-dasharray: 6 5; animation: dash 1s linear infinite; }
+@keyframes dash { to { stroke-dashoffset: -11; } }
+@keyframes pulse { 50% { opacity: .55; } }
+.pulsing { animation: pulse 1.2s ease-in-out infinite; }
+
+.detail { display: grid; grid-template-columns: 1fr 340px; min-height: 0; }
+.log { overflow: auto; padding: 12px 16px; font: 12.5px/1.5 var(--mono); min-height: 0; }
+.log .cmd { color: var(--blue); margin-top: 10px; white-space: pre-wrap; word-break: break-word; }
+.log .cmd::before { content: "$ "; color: var(--dim); }
+.log .out { color: #b9bfcc; white-space: pre-wrap; word-break: break-word; max-height: 160px; overflow: auto; border-left: 2px solid var(--line); padding-left: 10px; margin: 4px 0; }
+.log .think { color: var(--dim); font-style: italic; font-family: Inter, sans-serif; margin-top: 8px; }
+.log .text { color: var(--text); font-family: Inter, sans-serif; margin-top: 10px; background: var(--panel2); padding: 8px 10px; border-radius: 8px; }
+.verdict { border-left: 1px solid var(--line); padding: 14px 16px; overflow: auto; }
+.gate { display: flex; gap: 10px; align-items: flex-start; padding: 9px 0; border-bottom: 1px solid var(--line); }
+.gate .dot { width: 22px; height: 22px; border-radius: 50%; flex: none; display: grid; place-items: center; font-weight: 700; font-size: 12px; color: #000; }
+.gate .name { font-weight: 600; }
+.gate .d { color: var(--dim); font-size: 12.5px; }
+.judge { margin-top: 14px; padding: 12px; border-radius: 10px; background: var(--panel2); }
+.judge .v { font-weight: 700; font-size: 18px; }
+.judge .r { color: var(--amber); font-size: 12.5px; margin: 4px 0; }
+.big { font-size: 26px; font-weight: 700; letter-spacing: -.02em; }
+.muted { color: var(--dim); }
+.events { border-top: 1px solid var(--line); padding: 8px 20px; font: 12px var(--mono); color: var(--dim); display: flex; gap: 22px; overflow: hidden; white-space: nowrap; }
+.events span:first-child { color: var(--text); }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Ctrl<span>+</span>Z</div>
+  <div class="tag">Agents act in forks. Production only moves to a fork that passed.</div>
+  <div class="badges" id="badges"></div>
+</header>
+<div class="taskbar">
+  <button class="ghost" id="setupBtn">Start production sandbox</button>
+  <input id="task" value="The orders page is slow. Fix it." spellcheck="false">
+  <button class="primary" id="runBtn">Fork &amp; run</button>
+  <div class="status" id="status">idle</div>
+</div>
+<main>
+  <section class="left">
+    <div class="panelhead"><span>Viewing</span><b id="viewing">-</b><span class="sp"></span><button class="ghost" id="backBtn" style="padding:4px 10px;font-size:12px">Back to production</button></div>
+    <div class="empty" id="noframe">Start the production sandbox to see the live store.</div>
+    <iframe id="frame" style="display:none"></iframe>
+  </section>
+  <section class="right">
+    <div class="treewrap"><svg id="tree"></svg></div>
+    <div class="detail">
+      <div class="log" id="log"><div class="muted">Select a branch to see what its agent did.</div></div>
+      <div class="verdict" id="verdict"></div>
+    </div>
+  </section>
+</main>
+<div class="events" id="events"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const COLORS = { main: "var(--blue)", forking: "var(--amber)", running: "var(--amber)", evaluating: "var(--purple)",
+  pass: "var(--green)", fail: "var(--red)", discarded: "var(--gray)", superseded: "var(--gray)" };
+let S = null, selected = null, framed = null, logKey = "", lastTree = "", lastVerdict = "";
+
+async function post(path, body) {
+  const r = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body || {}) });
+  if (!r.ok) alert((await r.json()).detail || r.statusText);
+}
+$("setupBtn").onclick = () => post("/api/setup");
+$("runBtn").onclick = () => { selected = null; post("/api/run", { task: $("task").value }); };
+$("backBtn").onclick = () => { selected = S && S.main; render(); };
+
+function esc(s) { return String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+function layout(nodes) {
+  const kids = {}; let root = null;
+  Object.values(nodes).forEach(n => { if (n.parent) (kids[n.parent] ||= []).push(n.id); else root = n.id; });
+  const pos = {}; let leaf = 0;
+  (function place(id, depth) {
+    const c = (kids[id] || []).sort((a, b) => nodes[a].created - nodes[b].created);
+    if (!c.length) { pos[id] = { x: leaf++, y: depth }; return; }
+    c.forEach(k => place(k, depth + 1));
+    pos[id] = { x: (pos[c[0]].x + pos[c[c.length - 1]].x) / 2, y: depth };
+  })(root, 0);
+  return { pos, leaves: Math.max(leaf, 1), root };
+}
+
+function renderTree() {
+  const svg = $("tree"), nodes = S.nodes;
+  if (!Object.keys(nodes).length) { svg.innerHTML = `<text x="24" y="40" fill="#8a90a2" font-size="14">The fork tree appears here.</text>`; return; }
+  const { pos, leaves } = layout(nodes);
+  const W = 190, H = 54, GX = 26, GY = 46;
+  const depthMax = Math.max(...Object.values(pos).map(p => p.y));
+  const width = Math.max(svg.parentElement.clientWidth, leaves * (W + GX) + 40);
+  const height = Math.max(svg.parentElement.clientHeight - 4, (depthMax + 1) * (H + GY) + 30);
+  const offset = (width - leaves * (W + GX) + GX) / 2;
+  const xy = id => ({ x: offset + pos[id].x * (W + GX), y: 18 + pos[id].y * (H + GY) });
+  svg.setAttribute("width", width); svg.setAttribute("height", height);
+  let out = "";
+  Object.values(nodes).forEach(n => {
+    if (!n.parent || !pos[n.parent]) return;
+    const a = xy(n.parent), b = xy(n.id);
+    const live = ["forking", "running", "evaluating"].includes(n.status);
+    out += `<path class="edge ${live ? "live" : ""}" d="M${a.x + W / 2},${a.y + H} C${a.x + W / 2},${a.y + H + GY / 2} ${b.x + W / 2},${b.y - GY / 2} ${b.x + W / 2},${b.y}"/>`;
+  });
+  Object.values(nodes).forEach(n => {
+    const { x, y } = xy(n.id), c = COLORS[n.status] || "var(--gray)";
+    const faded = ["discarded", "superseded"].includes(n.status);
+    const live = ["forking", "running", "evaluating"].includes(n.status);
+    const v = n.verdict && n.verdict.gates;
+    const sub = n.status === "main" ? (S.baseline ? `PRODUCTION · ${Math.round(S.baseline.latency_ms)} ms` : "PRODUCTION")
+      : v ? `${n.status.toUpperCase()} · ${v.speed.speedup}x` : n.status.toUpperCase();
+    out += `<g class="node ${selected === n.id ? "selected" : ""} ${live ? "pulsing" : ""}" data-id="${n.id}" opacity="${faded ? .45 : 1}">
+      <rect x="${x}" y="${y}" width="${W}" height="${H}" rx="10" fill="var(--panel2)" stroke="${c}"/>
+      <rect x="${x}" y="${y}" width="5" height="${H}" rx="2" fill="${c}"/>
+      <text x="${x + 16}" y="${y + 22}">${esc(n.label)}${n.recommended ? "  ★" : ""}</text>
+      <text class="sub" x="${x + 16}" y="${y + 40}">${esc(sub)}</text></g>`;
+  });
+  if (out === lastTree) return;  // redrawing mid-click would swallow the click
+  lastTree = out;
+  svg.innerHTML = out;
+  svg.querySelectorAll(".node").forEach(g => g.onclick = () => { selected = g.dataset.id; render(); });
+}
+
+function renderDetail() {
+  const n = S.nodes[selected];
+  if (!n) { $("log").innerHTML = `<div class="muted">Select a branch to see what its agent did.</div>`; $("verdict").innerHTML = ""; return; }
+  const key = selected + ":" + n.log.length + ":" + n.status;
+  if (key !== logKey) {
+    const el = $("log"), atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 40;
+    el.innerHTML = n.status === "main" && !n.log.length
+      ? `<div class="big">Production</div><div class="muted">No agent ever runs here. Every change happens in a fork first.</div>`
+      : (n.log.map(l => `<div class="${l.kind}">${esc(l.text)}</div>`).join("") || `<div class="muted">Waiting for the agent…</div>`);
+    if (atBottom || logKey.split(":")[0] !== selected) el.scrollTop = el.scrollHeight;
+    logKey = key;
+  }
+  let h = `<div class="muted" style="font-size:12px;text-transform:uppercase;letter-spacing:.06em">${esc(n.persona ? "Branch" : "Node")}</div>
+    <div class="big">${esc(n.label)}</div><div class="muted" style="font:11px var(--mono)">${esc(n.sandbox_id || "")}</div>`;
+  const v = n.verdict;
+  if (v && v.gates) {
+    const g = v.gates;
+    h += ["integrity", "correctness", "speed"].map(k => `<div class="gate"><div class="dot" style="background:${g[k].pass ? "var(--green)" : "var(--red)"}">${g[k].pass ? "✓" : "✕"}</div>
+      <div><div class="name">${k[0].toUpperCase() + k.slice(1)}</div><div class="d">${esc(g[k].detail)}</div></div></div>`).join("");
+    h += `<div class="judge"><div class="muted" style="font-size:12px">CLAUDE JUDGE · score ${v.judge.score}</div>
+      <div class="v" style="color:${v.keep ? "var(--green)" : "var(--red)"}">${v.keep ? "KEEP" : "DISCARD"}</div>
+      <div class="r">${esc(v.judge.risk)}</div><div>${esc(v.judge.explanation)}</div></div>`;
+    if (S.arize && n.trace_id) h += `<div class="muted" style="margin-top:10px;font:11px var(--mono)">Arize trace ${n.trace_id.slice(0, 16)}…</div>`;
+    if (n.status === "pass") h += `<button class="good" style="margin-top:14px;width:100%" onclick="post('/api/promote',{node:'${n.id}'})">Promote to production</button>`;
+  } else if (v && v.error) {
+    h += `<div class="judge"><div class="v" style="color:var(--red)">ERROR</div><div>${esc(v.error)}</div></div>`;
+  } else if (n.status === "main" && S.baseline) {
+    const b = S.baseline;
+    h += `<div class="gate"><div><div class="name">Orders page</div><div class="d">${Math.round(b.latency_ms)} ms</div></div></div>
+      <div class="gate"><div><div class="name">Data</div><div class="d">${(b.orders || 0).toLocaleString()} orders · ${(b.items || 0).toLocaleString()} items</div></div></div>`;
+  } else if (n.status !== "main") {
+    h += `<div class="judge muted">${n.status === "evaluating" ? "Evaluating: integrity, correctness, speed, then the judge…" : "Agent working in this fork…"}</div>`;
+  }
+  if (h !== lastVerdict) { lastVerdict = h; $("verdict").innerHTML = h; }
+}
+
+function renderFrame() {
+  const id = selected || S.main;
+  if (!id) return;
+  const n = S.nodes[id];
+  $("viewing").textContent = n ? `${n.label}${id === S.main ? " (production)" : ""}` : "-";
+  $("backBtn").style.visibility = id === S.main ? "hidden" : "visible";
+  if (framed !== id && n && !["forking"].includes(n.status)) {
+    framed = id; $("noframe").style.display = "none"; $("frame").style.display = "block";
+    $("frame").src = `/preview/${id}/`;
+  }
+}
+
+function render() {
+  if (!S) return;
+  const b = [`backend: ${S.backend}`, `agent: ${S.agent}`];
+  $("badges").innerHTML = b.map(x => `<span class="badge">${esc(x)}</span>`).join("")
+    + (S.native_fork === null ? "" : `<span class="badge ${S.native_fork ? "on" : "warn"}">${S.native_fork ? "fork: disk + memory" : "fork: files only"}</span>`)
+    + `<span class="badge ${S.arize ? "on" : "warn"}">${S.arize ? "Arize: " + esc(S.arize_project) : "Arize: off"}</span>`;
+  $("status").textContent = S.busy ? S.status + "…" : S.status;
+  $("setupBtn").style.display = S.main ? "none" : "";
+  $("setupBtn").disabled = S.busy;
+  $("runBtn").disabled = S.busy || !S.main;
+  renderTree(); renderDetail(); renderFrame();
+  $("events").innerHTML = S.events.slice(-6).reverse().map(e => `<span>${new Date(e.t * 1000).toLocaleTimeString()} ${esc(e.msg)}</span>`).join("");
+}
+
+async function poll() {
+  try { S = await (await fetch("/api/state")).json(); if (!selected && S.main) selected = S.main; render(); } catch (e) {}
+  setTimeout(poll, 800);
+}
+poll();
+</script>
+</body>
+</html>

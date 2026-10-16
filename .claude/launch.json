@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "ctrlz-local",
+      "runtimeExecutable": "uv",
+      "runtimeArgs": ["run", "ctrlz"],
+      "env": { "CTRLZ_BACKEND": "local", "CTRLZ_AGENT": "scripted", "PORT": "7860" },
+      "port": 7860
+    },
+    {
+      "name": "ctrlz",
+      "runtimeExecutable": "uv",
+      "runtimeArgs": ["run", "ctrlz"],
+      "env": { "PORT": "7861" },
+      "port": 7861
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+[project]
+name = "ctrlz"
+version = "0.1.0"
+description = "Speculative execution for agents: fork, evaluate, promote."
+readme = "README.md"
+authors = [
+    { name = "Girish Ganesan", email = "gganesan@andrew.cmu.edu" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "anthropic>=1.15.0",
+    "arize-otel>=0.14.1",
+    "daytona>=0.224.1",
+    "fastapi>=0.143.3",
+    "openinference-instrumentation-anthropic>=3.0.3",
+    "openinference-semantic-conventions>=0.1.41",
+    "python-dotenv>=1.2.4",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[project.scripts]
+ctrlz = "ctrlz:main"
+
+[build-system]
+requires = ["uv_build>=0.12.13,<0.13.0"]
+build-backend = "uv_build"
