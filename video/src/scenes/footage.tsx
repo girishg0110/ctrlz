@@ -181,3 +181,86 @@ export const Built: React.FC<{ words: Word[] }> = ({ words }) => {
     </Bg>
   );
 };
+
+// Scene "Any project": the real example config, and the verdicts from a real Daytona run
+// (run 959aa9) in the format `ctrlz run` prints them.
+const TOML = [
+  'name = "Acme Store"',
+  "",
+  "[source]",
+  'dir = "app"',
+  "",
+  "[app]",
+  'setup = "python3 seed.py shop.db"',
+  'start = "nohup python3 server.py > server.log 2>&1 &"',
+  'health = "/api/health"',
+  "",
+  "[[check]]",
+  'name = "Integrity"',
+  'command = "python3 $CTRLZ_CHECKS/integrity.py"',
+  'compare = "equal"',
+];
+
+const TERM: { text: string; color?: string }[] = [
+  { text: "3 forks ready in 17.8s", color: C.dim },
+  { text: "KEEP    Careful DBA  <- recommended", color: C.green },
+  { text: "   pass  Integrity: orders, items, revenue unchanged" },
+  { text: "   pass  Speed: latency_ms 2,308 → 1.3 (1,775×)" },
+  { text: "DISCARD Aggressive cleanup", color: C.red },
+  { text: "   FAIL  Integrity: orders 200,000 → 45,850, -77.1%" },
+];
+
+const tomlLine = (line: string) => {
+  if (line.startsWith("[")) return <span style={{ color: C.amber }}>{line}</span>;
+  const i = line.indexOf(" = ");
+  if (i < 0) return <span>{line || " "}</span>;
+  return (<><span style={{ color: C.blue }}>{line.slice(0, i)}</span><span style={{ color: C.dim }}> = </span><span style={{ color: C.green }}>{line.slice(i + 3)}</span></>);
+};
+
+export const AnyProject: React.FC<{ words: Word[] }> = ({ words }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const t = frame / fps;
+  const totalChars = TOML.reduce((a, l) => a + l.length + 1, 0);
+  const typed = Math.floor(interpolate(t, [0.3, 3.8], [0, totalChars], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }));
+  let left = typed;
+  const tCmd = Math.max(3.4, cue(words, "one", 2.5) + 1.2);
+  const cmd = 'ctrlz run "The orders page is slow. Fix it."';
+  const cmdShown = cmd.slice(0, Math.floor(interpolate(t, [tCmd, tCmd + 1.2], [0, cmd.length], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })));
+  const tOut = tCmd + 1.5;
+  const tPatch = Math.max(tOut + TERM.length * 0.3 + 0.2, cue(words, "patch", 8) - 0.3);
+  const panel: React.CSSProperties = { background: "#0e1118", border: `2px solid ${C.line}`, borderRadius: 18, padding: "26px 30px", fontFamily: mono, fontSize: 25, lineHeight: 1.55, height: 660, boxShadow: "0 30px 80px #000c", overflow: "hidden" };
+  const tab = (label: string) => (<div style={{ fontFamily: mono, fontSize: 22, color: C.dim, marginBottom: 14 }}>{label}</div>);
+  return (
+    <Bg>
+      <div style={{ position: "absolute", top: 70, width: "100%", textAlign: "center", fontSize: 54, fontWeight: 800, opacity: fadeIn(frame, 0) }}>
+        Point it at any project
+      </div>
+      <div style={{ position: "absolute", top: 190, left: 80, right: 80, display: "grid", gridTemplateColumns: "0.95fr 1.05fr", gap: 40 }}>
+        <div style={{ opacity: fadeIn(frame, 2), transform: `translateY(${rise(frame, 2)}px)` }}>
+          {tab("ctrlz.toml")}
+          <div style={panel}>
+            {TOML.map((line, i) => {
+              const n = Math.max(0, Math.min(line.length, left));
+              left -= line.length + 1;
+              if (n === 0 && left < -1 && line) return <div key={i} style={{ opacity: 0 }}>.</div>;
+              return <div key={i} style={{ whiteSpace: "pre" }}>{tomlLine(line.slice(0, n))}</div>;
+            })}
+          </div>
+        </div>
+        <div style={{ opacity: fadeIn(frame, tCmd * fps - 10), transform: `translateY(${rise(frame, tCmd * fps - 10)}px)` }}>
+          {tab("terminal")}
+          <div style={panel}>
+            <div style={{ whiteSpace: "pre" }}><span style={{ color: C.dim }}>$ </span>{cmdShown}</div>
+            {TERM.map((l, i) => (
+              <div key={i} style={{ whiteSpace: "pre", color: l.color || "#b9bfcc", opacity: fadeIn(frame, (tOut + i * 0.3) * fps, 6), marginTop: i === 0 ? 10 : 0 }}>{l.text}</div>
+            ))}
+            <div style={{ marginTop: 22, opacity: fadeIn(frame, tPatch * fps, 8), color: C.text, background: "#2fbf7122", border: `1.5px solid ${C.green}`, borderRadius: 10, padding: "10px 14px", whiteSpace: "pre" }}>
+              patch → .ctrlz/runs/959aa9/careful/changes.patch
+            </div>
+          </div>
+        </div>
+      </div>
+    </Bg>
+  );
+};

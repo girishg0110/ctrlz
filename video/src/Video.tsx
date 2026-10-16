@@ -1,12 +1,12 @@
 import React from "react";
 import { AbsoluteFill, Audio, interpolate, Sequence, staticFile, useCurrentFrame } from "remotion";
 import narration from "./narration.json";
-import { Built, Catch, Checks, Fix, Fork, Setup } from "./scenes/footage";
-import { Close, ColdOpen, Idea, Problem } from "./scenes/motion";
+import { AnyProject, Built, Catch, Checks, Fix, Fork, Setup } from "./scenes/footage";
+import { Close, ColdOpen, Idea } from "./scenes/motion";
 import { C, FPS, inter } from "./theme";
 
 type Word = { w: string; s: number; e: number };
-type Scene = { n: number; audio: string; duration: number; words: Word[] };
+type Scene = { n: number; title: string; audio: string; duration: number; words: Word[] };
 
 export const REPO = "github.com/girishg0110/ctrlz";
 export const TEAM = "random deforestation";
@@ -30,17 +30,17 @@ export const timeline = (() => {
 
 export const TOTAL_FRAMES = timeline.reduce((a, s) => a + s.frames, 0);
 
-const body = (n: number, words: Word[]) => {
-  switch (n) {
-    case 1: return <ColdOpen />;
-    case 2: return <Problem />;
-    case 3: return <Idea />;
-    case 4: return <Setup split={Math.min(6, (words.find((w) => w.w.toLowerCase().startsWith("we"))?.s ?? 5) + LEAD)} />;
-    case 5: return <Fork words={shift(words)} />;
-    case 6: return <Checks words={shift(words)} />;
-    case 7: return <Catch />;
-    case 8: return <Fix />;
-    case 9: return <Built words={shift(words)} />;
+const body = (title: string, words: Word[]) => {
+  switch (title) {
+    case "Cold open": return <ColdOpen />;
+    case "The idea": return <Idea />;
+    case "The setup": return <Setup split={Math.min(6, (words.find((w) => w.w.toLowerCase().startsWith("we"))?.s ?? 5) + LEAD)} />;
+    case "The fork": return <Fork words={shift(words)} />;
+    case "The checks": return <Checks words={shift(words)} />;
+    case "The catch": return <Catch />;
+    case "The fix": return <Fix />;
+    case "Any project": return <AnyProject words={shift(words)} />;
+    case "How it's built": return <Built words={shift(words)} />;
     default: return <Close repo={REPO} team={TEAM} />;
   }
 };
@@ -82,7 +82,7 @@ export const CtrlZVideo: React.FC = () => (
   <AbsoluteFill style={{ background: C.bg, fontFamily: inter, color: C.text }}>
     {timeline.map((s) => (
       <Sequence key={s.n} from={s.from} durationInFrames={s.frames} name={`scene ${s.n}`}>
-        {body(s.n, s.words)}
+        {body(s.title, s.words)}
         <Sequence from={Math.round(LEAD * FPS)}>
           <Audio src={staticFile(s.audio)} />
         </Sequence>
