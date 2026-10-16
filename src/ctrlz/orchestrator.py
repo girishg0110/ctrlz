@@ -19,7 +19,7 @@ from opentelemetry import context as otel_context
 from opentelemetry import trace
 from openinference.semconv.trace import OpenInferenceSpanKindValues, SpanAttributes
 
-from . import tracing
+from . import llm, tracing
 from .agent import PERSONAS, run_agent
 from .boxes import Box, DaytonaBox, LocalBox
 from .evals import evaluate, measure
@@ -35,7 +35,9 @@ class Orchestrator:
         self.state: dict = {
             "status": "idle",
             "backend": os.environ.get("CTRLZ_BACKEND", "daytona"),
-            "agent": os.environ.get("CTRLZ_AGENT", "claude"),
+            "agent": os.environ.get("CTRLZ_AGENT", "llm"),
+            "agent_model": llm.short(llm.AGENT_MODEL),
+            "judge_model": llm.short(llm.JUDGE_MODEL),
             "arize": tracing.enabled(),
             "arize_project": tracing.PROJECT,
             "main": None,
@@ -120,6 +122,7 @@ class Orchestrator:
         self.node(nid, parent=None, label="production", persona=None, status="main",
                   sandbox_id=box.sandbox_id, depth=0, created=time.time())
         self.event(f"production ready: orders page takes {baseline.get('latency_ms', 0):,.0f} ms")
+        self._prewarm(box)
         self._status("ready")
 
     # ------------------------------------------------------------------ run
@@ -193,9 +196,9 @@ class Orchestrator:
             with ThreadPoolExecutor(len(ids)) as pool:
                 results = list(pool.map(lambda a: branch(*a), zip(ids, personas)))
 
-            # 3. Recommend the fastest branch that passed every gate and the judge.
+            # 3. Recommend the passing branch the judge trusts most; speed breaks ties.
             passing = [(nid, v) for nid, v in results if v.get("keep")]
-            winner = max(passing, key=lambda x: x[1]["gates"]["speed"]["speedup"])[0] if passing else None
+            winner = max(passing, key=lambda x: (x[1]["judge"]["score"], x[1]["gates"]["speed"]["speedup"]))[0] if passing else None
             with self.lock:
                 self.state["runs"][-1]["winner"] = winner
             run_span.set_attribute("ctrlz.winner", winner or "none")
@@ -205,7 +208,12 @@ class Orchestrator:
             self.event(f"recommended: {self.state['nodes'][winner]['label']} - promote it to make it production")
         else:
             self.event("no branch passed; production stays exactly as it was")
+        self._prewarm(main_box)
         self._status("review")
+
+    def _prewarm(self, box: Box) -> None:
+        if isinstance(box, DaytonaBox) and not box.native_fork:
+            DaytonaBox.prewarm(box.snapshot, len(DEFAULT_PERSONAS))
 
     # ------------------------------------------------------------------ promote / discard
 
@@ -244,3 +252,4 @@ class Orchestrator:
         for box in list(self.boxes.values())[::-1]:
             self._safe_delete(box)
         self.boxes.clear()
+        DaytonaBox.drain_warm()

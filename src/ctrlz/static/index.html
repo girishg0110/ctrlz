@@ -190,7 +190,7 @@ function renderDetail() {
     const g = v.gates;
     h += ["integrity", "correctness", "speed"].map(k => `<div class="gate"><div class="dot" style="background:${g[k].pass ? "var(--green)" : "var(--red)"}">${g[k].pass ? "✓" : "✕"}</div>
       <div><div class="name">${k[0].toUpperCase() + k.slice(1)}</div><div class="d">${esc(g[k].detail)}</div></div></div>`).join("");
-    h += `<div class="judge"><div class="muted" style="font-size:12px">CLAUDE JUDGE · score ${v.judge.score}</div>
+    h += `<div class="judge"><div class="muted" style="font-size:12px">LLM JUDGE · ${esc(S.judge_model)} · score ${v.judge.score}</div>
       <div class="v" style="color:${v.keep ? "var(--green)" : "var(--red)"}">${v.keep ? "KEEP" : "DISCARD"}</div>
       <div class="r">${esc(v.judge.risk)}</div><div>${esc(v.judge.explanation)}</div></div>`;
     if (S.arize && n.trace_id) h += `<div class="muted" style="margin-top:10px;font:11px var(--mono)">Arize trace ${n.trace_id.slice(0, 16)}…</div>`;
@@ -221,7 +221,7 @@ function renderFrame() {
 
 function render() {
   if (!S) return;
-  const b = [`backend: ${S.backend}`, `agent: ${S.agent}`];
+  const b = [`backend: ${S.backend}`, `agent: ${S.agent === "scripted" ? "scripted" : S.agent_model}`];
   $("badges").innerHTML = b.map(x => `<span class="badge">${esc(x)}</span>`).join("")
     + (S.native_fork === null ? "" : `<span class="badge ${S.native_fork ? "on" : "warn"}">${S.native_fork ? "fork: disk + memory" : "fork: files only"}</span>`)
     + `<span class="badge ${S.arize ? "on" : "warn"}">${S.arize ? "Arize: " + esc(S.arize_project) : "Arize: off"}</span>`;

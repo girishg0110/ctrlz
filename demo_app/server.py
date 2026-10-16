@@ -83,7 +83,7 @@ body {{ font: 14px/1.4 -apple-system, system-ui, sans-serif; margin: 0; backgrou
 header {{ background: #1d2330; color: #fff; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; }}
 header b {{ font-size: 16px; }}
 .vitals {{ font: 12px ui-monospace, monospace; opacity: .85; }}
-.cards {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; padding: 16px 20px 0; }}
+.cards {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 16px 20px 0; }}
 .card {{ background: #fff; border-radius: 10px; padding: 12px 14px; box-shadow: 0 1px 2px #0001; }}
 .card small {{ color: #6b7280; display: block; }} .card div {{ font-size: 20px; font-weight: 600; }}
 .fast {{ color: #15803d; }} .ok {{ color: #b45309; }} .slow {{ color: #b91c1c; }}

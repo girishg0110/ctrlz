@@ -211,25 +211,6 @@ wheels = [
 ]
 
 [[package]]
-name = "anthropic"
-version = "1.15.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "anyio" },
-    { name = "docstring-parser" },
-    { name = "httpx2" },
-    { name = "jiter" },
-    { name = "opentelemetry-api" },
-    { name = "pydantic" },
-    { name = "sniffio" },
-    { name = "typing-extensions" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/10/37/5a2a4316df8babd28f096477a707cd75f240b4264c97fb128c32375105d6/anthropic-1.15.0.tar.gz", hash = "sha256:90caa9df83e2fc8bddb4ddeb83b7191bce255f635c03eae055deec521741df08", size = 1726101, upload-time = "2026-10-15T19:45:34.635Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/d1/65/54437e7edea49a3be9ef56f6b5965999bfdc52b9dadc9b448124ca51a594/anthropic-1.15.0-py3-none-any.whl", hash = "sha256:10189a7993c5c71a0a2d4bb80020ca6a2fd27679f51e627405da37251d15ff49", size = 2047755, upload-time = "2026-10-15T19:45:32.951Z" },
-]
-
-[[package]]
 name = "anyio"
 version = "4.15.1"
 source = { registry = "https://pypi.org/simple" }
@@ -431,11 +412,11 @@ name = "ctrlz"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
-    { name = "anthropic" },
     { name = "arize-otel" },
     { name = "daytona" },
     { name = "fastapi" },
-    { name = "openinference-instrumentation-anthropic" },
+    { name = "openai" },
+    { name = "openinference-instrumentation-openai" },
     { name = "openinference-semantic-conventions" },
     { name = "python-dotenv" },
     { name = "uvicorn", extra = ["standard"] },
@@ -443,11 +424,11 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "anthropic", specifier = ">=1.15.0" },
     { name = "arize-otel", specifier = ">=0.14.1" },
     { name = "daytona", specifier = ">=0.224.1" },
     { name = "fastapi", specifier = ">=0.143.3" },
-    { name = "openinference-instrumentation-anthropic", specifier = ">=3.0.3" },
+    { name = "openai", specifier = ">=3.31.0" },
+    { name = "openinference-instrumentation-openai", specifier = ">=0.1.65" },
     { name = "openinference-semantic-conventions", specifier = ">=0.1.41" },
     { name = "python-dotenv", specifier = ">=1.2.4" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.54.0" },
@@ -591,15 +572,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/49/85/12f0a49a7c4ffb70572b6c2ef13c90c88fd190debda93b23f026b25f9634/deprecated-1.3.1.tar.gz", hash = "sha256:b1b50e0ff0c1fddaa5708a2c6b0a6588bb09b892825ab2b214ac9ea9d92a5223", size = 2932523, upload-time = "2025-10-30T08:19:02.757Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/84/d0/205d54408c08b13550c733c4b85429e7ead111c7f0014309637425520a9a/deprecated-1.3.1-py2.py3-none-any.whl", hash = "sha256:597bfef186b6f60181535a29fbe44865ce137a5079f295b479886c82729d5f3f", size = 11298, upload-time = "2025-10-30T08:19:00.758Z" },
-]
-
-[[package]]
-name = "docstring-parser"
-version = "0.18.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/e0/4d/f332313098c1de1b2d2ff91cf2674415cc7cddab2ca1b01ae29774bd5fdf/docstring_parser-0.18.0.tar.gz", hash = "sha256:292510982205c12b1248696f44959db3cdd1740237a968ea1e2e7a900eeb2015", size = 29341, upload-time = "2026-04-14T04:09:19.867Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/a7/5f/ed01f9a3cdffbd5a008556fc7b2a08ddb1cc6ace7effa7340604b1d16699/docstring_parser-0.18.0-py3-none-any.whl", hash = "sha256:b3fcbed555c47d8479be0796ef7e19c2670d428d72e96da63f3a40122860374b", size = 22484, upload-time = "2026-04-14T04:09:18.638Z" },
 ]
 
 [[package]]
@@ -1228,6 +1200,23 @@ wheels = [
 ]
 
 [[package]]
+name = "openai"
+version = "3.31.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "anyio" },
+    { name = "httpx2" },
+    { name = "jiter" },
+    { name = "pydantic" },
+    { name = "sniffio" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/73/99/d0c5b9e60eb131bfe5f6f818e9b25650b64004ff84512c0f7e00a246b826/openai-3.31.0.tar.gz", hash = "sha256:58110edba9acaf29cb2a675a1cbcccdd9f2fdb4932baed474dc847a7639e5d02", size = 2117207, upload-time = "2026-10-14T05:39:33.445Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/69/22/66014c8fede0aa2b3381cf80c5102219b78657b3e61776cdab8f0b78675a/openai-3.31.0-py3-none-any.whl", hash = "sha256:e5839f6670483f368de40ce3422f524c1afaf12ff8660539f53489e200db8d78", size = 2235454, upload-time = "2026-10-14T05:39:31.197Z" },
+]
+
+[[package]]
 name = "openinference-instrumentation"
 version = "0.1.71"
 source = { registry = "https://pypi.org/simple" }
@@ -1243,10 +1232,11 @@ wheels = [
 ]
 
 [[package]]
-name = "openinference-instrumentation-anthropic"
-version = "3.0.3"
+name = "openinference-instrumentation-openai"
+version = "0.1.65"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
+    { name = "anyio" },
     { name = "openinference-instrumentation" },
     { name = "openinference-semantic-conventions" },
     { name = "opentelemetry-api" },
@@ -1255,9 +1245,9 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "wrapt" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/14/f4/b25dd37b61cd9942d1f738d79e1661526c81b0a0ded3e3af0fc5b81fab66/openinference_instrumentation_anthropic-3.0.3.tar.gz", hash = "sha256:f0c866eac8b900451a806bfb2c8d2ebb248e15557ee4357d75a36c7bdce287c8", size = 18056, upload-time = "2026-10-10T06:23:47.348Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/bc/83/cb4fa924d602ddf47e495cfb776cb3c697955ca5d0363ed3dce565701bab/openinference_instrumentation_openai-0.1.65.tar.gz", hash = "sha256:86a83a656277165cc012c42e7bbc0569b7cf97b50081e11bd50cbd41f5c632de", size = 29859, upload-time = "2026-10-09T18:29:06.725Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/2e/d8/b4b76f630767bdb44a379c5df114fd5ecb5f9e815a68a7866af5b848eac4/openinference_instrumentation_anthropic-3.0.3-py3-none-any.whl", hash = "sha256:15b79dd35c5b84479c9e968f6557181ddb71f5261feb630555889c04a72323d9", size = 21625, upload-time = "2026-10-10T06:23:46.16Z" },
+    { url = "https://files.pythonhosted.org/packages/10/ce/003b9366e7f01eb0b8373156a31c92c71ef44289d27e963e09ca7c581686/openinference_instrumentation_openai-0.1.65-py3-none-any.whl", hash = "sha256:aa29ae89aecfed1a705b3b91c8d631fc7cd2f136b31eafb3229d9cf464bf83f0", size = 37952, upload-time = "2026-10-09T18:29:05.017Z" },
 ]
 
 [[package]]

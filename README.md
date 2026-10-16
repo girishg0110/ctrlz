@@ -10,7 +10,7 @@ different engineering style. Every fork then has to pass the same checks:
 - **Integrity:** no data lost.
 - **Correctness:** the dashboard still shows the right orders.
 - **Speed:** the page got at least 2x faster.
-- **Claude judge:** a final keep-or-discard call on the whole change.
+- **LLM judge:** a final keep-or-discard call on the whole change.
 
 Each decision is traced in Arize. Production moves forward only to a fork that
 passed, and the losing forks are deleted. Rolling back costs nothing, because
@@ -41,8 +41,8 @@ In that mode the sandboxes are local folders and the agents replay fixed command
 | Tool | Role |
 |---|---|
 | **Daytona** | Production and every branch are sandboxes. On Linux VM sandboxes, `sandbox.fork()` copies disk **and memory** in under a second, so the running server carries on in each fork. Container sandboxes fall back to copying files into fresh sandboxes. Live previews of each fork come through `get_preview_link`. |
-| **Arize AX** | One trace per run. Each branch is an AGENT span containing the Claude LLM spans (OpenInference auto-instrumentation) and a TOOL span for every shell command. An EVALUATOR span records `eval.integrity`, `eval.correctness`, `eval.speed` and `eval.judge` labels with explanations. |
-| **Claude** (`claude-opus-5-5`) | Runs the agent in each fork (bash tool, adaptive thinking) and acts as the release-gate judge (structured output). |
+| **Arize AX** | One trace per run. Each branch is an AGENT span containing the LLM spans (OpenInference OpenAI auto-instrumentation) and a TOOL span for every shell command. An EVALUATOR span records `eval.integrity`, `eval.correctness`, `eval.speed` and `eval.judge` labels with explanations. |
+| **Fireworks AI** (Kimi K3) | Runs the agent in each fork (bash tool calling) and acts as the release-gate judge (JSON-schema output), via the OpenAI-compatible API. |
 
 ## Layout
 
@@ -50,8 +50,9 @@ In that mode the sandboxes are local folders and the agents replay fixed command
 demo_app/            the "production" store (stdlib only): server.py, seed.py
 src/ctrlz/
   boxes.py           Daytona / local sandbox backends, fork + copy-fork
-  agent.py           Claude bash-tool loop per fork, engineering styles
-  evals.py           integrity / correctness / speed gates + Claude judge -> Arize
+  llm.py             Fireworks client (OpenAI-compatible)
+  agent.py           bash-tool agent loop per fork, engineering styles
+  evals.py           integrity / correctness / speed gates + LLM judge -> Arize
   check_script.py    measurement harness uploaded fresh into each fork
   orchestrator.py    fork -> run agents in parallel -> evaluate -> recommend -> promote
   web.py, static/    FastAPI + fork-tree dashboard

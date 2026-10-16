@@ -13,13 +13,26 @@ import shutil
 import socket
 import subprocess
 import tempfile
+import threading
 import time
 import urllib.request
+import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
 
 DEMO_APP = Path(__file__).resolve().parents[2] / "demo_app"
 APP_PORT = 8000
+SHARE_PORT = 8001
+SHARE_DIR = "/tmp/ctrlz-share"
+
+_WARM: dict[str, list] = {}
+_WARM_LOCK = threading.Lock()
+
+
+def _take_warm(snapshot: str):
+    with _WARM_LOCK:
+        pool = _WARM.get(snapshot) or []
+        return pool.pop() if pool else None
 
 
 @dataclass
@@ -139,14 +152,34 @@ class DaytonaBox(Box):
         from concurrent.futures import ThreadPoolExecutor
 
         archive = "/tmp/ctrlz-state.tgz"
-        r = self.exec(f"tar czf {archive} -C {self.app_dir} --exclude=server.log .", timeout=300)
+        # The parent serves its state archive on SHARE_PORT so children can pull it over
+        # Daytona's network instead of round-tripping through this machine.
+        r = self.exec(
+            f"mkdir -p {SHARE_DIR} && tar czf {SHARE_DIR}/state.tgz -C {self.app_dir} --exclude=server.log . && "
+            f"(pgrep -f 'http.server {SHARE_PORT}' >/dev/null || "
+            f"(cd {SHARE_DIR} && nohup python3 -m http.server {SHARE_PORT} > /tmp/ctrlz-share.log 2>&1 &))",
+            timeout=300,
+        )
         if r.exit_code != 0:
             raise RuntimeError(f"state archive failed: {r.output}")
-        data = self.sandbox.fs.download_file(archive)
+        share = self.sandbox.get_preview_link(SHARE_PORT)
+        fetch = (
+            "python3 -c \"import urllib.request as u; "
+            f"r=u.Request('{share.url.rstrip('/')}/state.tgz', headers={{'X-Daytona-Preview-Token': '{share.token or ''}', "
+            "'X-Daytona-Skip-Preview-Warning': 'true'}); "
+            f"open('{archive}','wb').write(u.urlopen(r, timeout=120).read())\""
+        )
+        local_copy: list[bytes] = []
+        lock = threading.Lock()
 
         def make(name: str) -> "DaytonaBox":
-            child = DaytonaBox.create(self.snapshot, name, upload_app=False)
-            child.upload(data, archive)
+            child = _take_warm(self.snapshot) or DaytonaBox.create(self.snapshot, name, upload_app=False)
+            child.name = name
+            if child.exec(fetch, timeout=180).exit_code != 0:
+                with lock:  # sandbox network is restricted: fall back to relaying through here
+                    if not local_copy:
+                        local_copy.append(self.sandbox.fs.download_file(f"{SHARE_DIR}/state.tgz"))
+                child.upload(local_copy[0], archive)
             child.exec(f"mkdir -p {child.app_dir} && tar xzf {archive} -C {child.app_dir}", timeout=300)
             child.exec(f"APP_PORT={child.port} nohup python3 server.py > server.log 2>&1 &")
             child.wait_healthy()
@@ -154,6 +187,32 @@ class DaytonaBox(Box):
 
         with ThreadPoolExecutor(len(names)) as pool:
             return list(pool.map(make, names))
+
+    @staticmethod
+    def prewarm(snapshot: str, n: int) -> None:
+        """Create empty sandboxes ahead of time so a copy-fork skips provisioning."""
+        def one(_):
+            try:
+                box = DaytonaBox.create(snapshot, f"ctrlz-warm-{uuid.uuid4().hex[:6]}", upload_app=False)
+                with _WARM_LOCK:
+                    _WARM.setdefault(snapshot, []).append(box)
+            except Exception as e:
+                print(f"[ctrlz] prewarm failed: {e}")
+
+        missing = n - len(_WARM.get(snapshot, []))
+        for i in range(max(0, missing)):
+            threading.Thread(target=one, args=(i,), daemon=True).start()
+
+    @staticmethod
+    def drain_warm() -> None:
+        with _WARM_LOCK:
+            boxes = [b for bs in _WARM.values() for b in bs]
+            _WARM.clear()
+        for b in boxes:
+            try:
+                b.delete()
+            except Exception:
+                pass
 
     def upload(self, content: bytes, remote_path: str) -> None:
         self.sandbox.fs.upload_file(content, remote_path)

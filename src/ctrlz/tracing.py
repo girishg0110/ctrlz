@@ -19,10 +19,10 @@ def setup() -> bool:
         print("[ctrlz] Arize tracing disabled: set ARIZE_SPACE_ID and ARIZE_API_KEY")
         return False
     from arize.otel import register
-    from openinference.instrumentation.anthropic import AnthropicInstrumentor
+    from openinference.instrumentation.openai import OpenAIInstrumentor
 
     tp = register(space_id=space_id, api_key=api_key, project_name=PROJECT, verbose=False)
-    AnthropicInstrumentor().instrument(tracer_provider=tp)
+    OpenAIInstrumentor().instrument(tracer_provider=tp)
     _enabled = True
     print(f"[ctrlz] Arize tracing on, project '{PROJECT}'")
     return True

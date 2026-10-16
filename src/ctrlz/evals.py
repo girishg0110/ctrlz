@@ -1,4 +1,4 @@
-"""Branch evaluation: deterministic gates plus a Claude judge, recorded as an Arize EVALUATOR span.
+"""Branch evaluation: deterministic gates plus an LLM judge, recorded as an Arize EVALUATOR span.
 
 A branch is kept only if every gate passes AND the judge says keep:
   integrity    - no orders, items or revenue lost versus the parent
@@ -13,12 +13,11 @@ import os
 from pathlib import Path
 from typing import Literal
 
-import anthropic
 from openinference.semconv.trace import OpenInferenceSpanKindValues, SpanAttributes
 from pydantic import BaseModel
 
-from . import tracing
-from .agent import MODEL, AgentResult, transcript_for_judge
+from . import llm, tracing
+from .agent import AgentResult, transcript_for_judge
 from .boxes import Box
 
 CHECK = (Path(__file__).parent / "check_script.py").read_bytes()
@@ -95,28 +94,31 @@ Keep `explanation` to 2 sentences, written for a human operator."""
 
 
 def judge(task: str, result: AgentResult, g: dict) -> Judgement:
-    if os.environ.get("CTRLZ_AGENT") == "scripted" and not os.environ.get("ANTHROPIC_API_KEY"):
+    has_key = os.environ.get("FIREWORKS_AI_API_KEY") or os.environ.get("FIREWORKS_API_KEY")
+    if os.environ.get("CTRLZ_AGENT") == "scripted" and not has_key:
         ok = all(g[k]["pass"] for k in ("integrity", "correctness", "speed"))
         return Judgement(verdict="keep" if ok else "discard", score=0.9 if ok else 0.05,
                          risk="none observed" if ok else "see failed gates",
                          explanation="Offline judge: decided from the deterministic gates only.")
-    client = anthropic.Anthropic()
-    response = client.messages.parse(
-        model=MODEL,
+    response = llm.client().chat.completions.create(
+        model=llm.JUDGE_MODEL,
         max_tokens=4000,
-        output_config={"effort": "low"},
-        output_format=Judgement,
         messages=[{
             "role": "user",
             "content": JUDGE_PROMPT.format(
                 task=task, transcript=transcript_for_judge(result), gates=json.dumps(g, indent=1)
             ),
         }],
+        response_format={
+            "type": "json_schema",
+            "json_schema": {"name": "judgement", "schema": Judgement.model_json_schema(), "strict": True},
+        },
     )
-    if response.parsed_output is None:
+    try:
+        return Judgement.model_validate_json(response.choices[0].message.content or "")
+    except ValueError:
         return Judgement(verdict="discard", score=0.0, risk="judge returned no verdict",
-                         explanation=f"Judge stopped with {response.stop_reason}; discarding to be safe.")
-    return response.parsed_output
+                         explanation="The judge's answer did not parse; discarding to be safe.")
 
 
 def evaluate(box: Box, task: str, result: AgentResult, baseline: dict) -> dict:
