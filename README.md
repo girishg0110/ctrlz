@@ -1,5 +1,7 @@
 # Ctrl+Z: speculative execution for agents
 
+Built by team **random deforestation** at the Daytona HackSprint with Arize AI, NYC, October 2026.
+
 Agents make mistakes. In July 2025 a coding agent deleted a company's production
 database during a code freeze. Ctrl+Z makes sure agent mistakes never reach production.
 

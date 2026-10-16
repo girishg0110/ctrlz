@@ -5,3 +5,8 @@
 __pycache__/
 *.db
 .ctrlz/
+node_modules/
+video/out/
+video/public/footage/
+video/public/audio/
+video/raw/
