@@ -155,7 +155,7 @@ export const Idea: React.FC = () => {
         const color = passed ? (winner ? C.green : C.red) : C.amber;
         return (
           <React.Fragment key={i}>
-            <Box x={fx} y={fy} w={340} h={120} color={color} label={winner && promote > 0.5 ? "Production" : `Copy ${i + 1}`}
+            <Box x={fx} y={fy} w={340} h={120} color={color} label={winner && promote > 0.5 ? "Production" : `Fork ${i + 1}`}
               sub={winner && promote > 0.5 ? "passed every check" : "agent at work"} opacity={split * (winner ? 1 : 1 - promote * 0.75)} />
             <div style={{ position: "absolute", left: x - 120, top: copyY + 82, width: 240, display: "flex", justifyContent: "center", gap: 14, opacity: 1 - promote }}>
               {[0, 1, 2, 3].map((k) => {

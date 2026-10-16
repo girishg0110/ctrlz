@@ -11,7 +11,7 @@
 
 ## Summary
 
-Ctrl+Z lets AI agents change a live system without risking it. For each task it copies production into separate Daytona sandboxes, runs one agent in each, and tests every copy for lost data, broken output, speed and safety. Production moves only to a copy that passes; the rest are deleted, so an agent's mistake never reaches customers.
+Ctrl+Z lets AI agents change a live system without risking it. For each task it uses Daytona's fork feature to branch production into separate sandboxes, runs one agent in each, and tests every copy for lost data, broken output, speed and safety. Production moves only to a copy that passes; the rest are deleted, so an agent's mistake never reaches customers.
 
 ## The problem and its impact
 
@@ -30,7 +30,7 @@ Anyone handing real systems to agents could use this, for database migrations, d
 ## How it works (architecture)
 
 1. **Production sandbox.** The store (a Python web server with a 1.1M-row SQLite database) runs in a Daytona sandbox. No agent ever runs here.
-2. **Copy.** For each task, Ctrl+Z copies production into one sandbox per agent. On Daytona Linux VM sandboxes it uses `sandbox.fork()`, which copies disk and memory in under a second. Our account only had container sandboxes, so Ctrl+Z falls back to copying production's files into pre-created spare sandboxes, which takes about 18 seconds for three copies.
+2. **Fork.** For each task, Ctrl+Z forks production into one sandbox per agent. On Daytona Linux VM sandboxes it uses `sandbox.fork()`, which copies disk and memory in under a second. Our account only had container sandboxes, so Ctrl+Z falls back to copying production's files into pre-created spare sandboxes, which takes about 18 seconds for three copies.
 3. **Agents.** Each copy gets an agent (Kimi K3 on Fireworks AI) with a bash tool that runs commands inside that copy's sandbox. The agents share the same task but have different working styles, so their approaches differ.
 4. **Checks.** When an agent finishes, Ctrl+Z uploads a fresh test script into its copy, so the agent can't tamper with it, and runs four checks:
    - **Integrity:** no orders, items or revenue lost compared with production.
@@ -44,7 +44,7 @@ Anyone handing real systems to agents could use this, for database migrations, d
 
 ## Sponsor tools and how we used them
 
-- **Daytona.** Production and every copy are Daytona sandboxes. We use the Python SDK to create sandboxes, run commands (every agent command and every check runs through `process.exec`), move files, and get preview links so the dashboard can show each copy's live store. Ctrl+Z is written for `sandbox.fork()` on Linux VM sandboxes, and falls back to a file copy into pre-warmed container sandboxes when forking isn't available, which was the case on our account today.
+- **Daytona.** Ctrl+Z is built around Daytona's fork feature: production is a sandbox, and every agent gets its own fork of it via `sandbox.fork()`, tracked as a fork tree. We also use the Python SDK to create sandboxes, run commands (every agent command and every check runs through `process.exec`), move files, and get preview links so the dashboard can show each copy's live store. Forking needs Linux VM sandboxes; while our access request is pending, Ctrl+Z falls back to copying files into pre-warmed container sandboxes, which is what the recorded demo run used.
 - **Arize AX.** Ctrl+Z sends OpenTelemetry traces to Arize with OpenInference. Each run is a CHAIN span, and each branch is an AGENT span. Under each branch are the model calls (auto-instrumented), a TOOL span for every shell command with its output, and an EVALUATOR span. The EVALUATOR span records `eval.integrity`, `eval.correctness`, `eval.speed` and `eval.judge` labels, scores and explanations. In Arize you can open the discarded branch and see the exact command that deleted the orders next to the verdict that caught it.
 - **ElevenLabs.** We used ElevenLabs text-to-speech, with the Eric voice and word-level timestamps, to narrate our demo video. The timestamps drive the captions and time the animations to the voice. ElevenLabs is used for the video only, not inside the product.
 - **Fireworks AI** (not an event sponsor). Runs the agents and the judge on Kimi K3 through its OpenAI-compatible API, using tool calling for the agents and JSON-schema output for the judge.

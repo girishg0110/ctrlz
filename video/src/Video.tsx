@@ -1,5 +1,5 @@
 import React from "react";
-import { AbsoluteFill, Audio, Sequence, staticFile, useCurrentFrame } from "remotion";
+import { AbsoluteFill, Audio, interpolate, Sequence, staticFile, useCurrentFrame } from "remotion";
 import narration from "./narration.json";
 import { Built, Catch, Checks, Fix, Fork, Setup } from "./scenes/footage";
 import { Close, ColdOpen, Idea, Problem } from "./scenes/motion";
@@ -14,6 +14,7 @@ export const TEAM = "random deforestation";
 const LEAD = 0.3; // silence before each scene's narration
 const TAIL = 0.5; // silence after it
 const END_HOLD = 2.2; // extra hold on the final card
+const MUSIC_VOLUME = 0.18; // Apple Loops bed, kept well under the voice
 
 const scenes = (narration.scenes as Scene[]).map((s) => ({ ...s }));
 
@@ -87,6 +88,10 @@ export const CtrlZVideo: React.FC = () => (
         </Sequence>
       </Sequence>
     ))}
+    <Audio
+      src={staticFile("audio/music.m4a")}
+      volume={(f) => interpolate(f, [0, 30, TOTAL_FRAMES - 75, TOTAL_FRAMES], [0, MUSIC_VOLUME, MUSIC_VOLUME, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })}
+    />
     <Captions />
   </AbsoluteFill>
 );

@@ -46,7 +46,7 @@ export const Fork: React.FC<{ words: Word[] }> = ({ words }) => {
   return (
     <AbsoluteFill>
       <Footage from={11.4} rate={3} zoom={[1.15, 1.2]} origin="72% 25%" speedLabel="real run · 3× speed" />
-      <Callout at={0.6 * fps} x={70} y={190} color={C.amber} size={50}>3 copies on Daytona</Callout>
+      <Callout at={0.6 * fps} x={70} y={190} color={C.amber} size={50}>3 forks on Daytona</Callout>
       <Pill at={cue(words, "careful", 4) * fps} x={1075} y={470} color={C.green}>careful database expert</Pill>
       <Pill at={cue(words, "rewrite", 6) * fps} x={1365} y={540} color={C.blue}>allowed to rewrite code</Pill>
       <Pill at={cue(words, "third", 8) * fps} x={1660} y={470} color={C.red}>told to act recklessly</Pill>
@@ -153,12 +153,12 @@ export const Built: React.FC<{ words: Word[] }> = ({ words }) => {
   const tF = cue(words, "fireworks", 5.6);
   const swap = fadeIn(frame, (tA + 2.2) * fps, 14);
   const sandboxes = [
-    ["production", C.blue], ["copy · careful", C.green], ["copy · rewrite", C.amber], ["copy · reckless", C.red],
+    ["production", C.blue], ["fork · careful", C.green], ["fork · rewrite", C.amber], ["fork · reckless", C.red],
   ];
   return (
     <Bg>
       <div style={{ position: "absolute", top: 120, left: 80, right: 80, display: "grid", gridTemplateColumns: "1fr 1.35fr 1fr", gap: 40 }}>
-        <Panel at={0.1} title="Daytona" sub="every copy" color={C.text}>
+        <Panel at={0.1} title="Daytona" sub="forks and runs every copy" color={C.text}>
           <div style={{ padding: 30, display: "flex", flexDirection: "column", gap: 18 }}>
             {sandboxes.map(([name, color], i) => (
               <div key={i} style={{ opacity: fadeIn(frame, 6 + i * 5), transform: `translateX(${rise(frame, 6 + i * 5, 30)}px)`, background: C.panel2, borderRadius: 14, padding: "22px 24px", border: `1px solid ${C.line}`, borderLeft: `8px solid ${color}` }}>

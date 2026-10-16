@@ -28,15 +28,81 @@ production never changed.
 3. The evals mark Aggressive cleanup red: 77% of orders deleted. Click it to open that fork's live, broken store. Click back: production is untouched.
 4. Promote the winner. Production is now about 1,000x faster, with zero rows lost.
 
-## Run
+## Try it yourself
+
+You need [uv](https://docs.astral.sh/uv/) (it installs Python 3.12 for you).
 
 ```bash
-cp .env.example .env.local   # add keys
-uv run ctrlz                 # http://localhost:7860
+git clone https://github.com/girishg0110/ctrlz && cd ctrlz
+uv sync
 ```
 
-To work offline with no API keys, run `CTRLZ_BACKEND=local CTRLZ_AGENT=scripted uv run ctrlz`.
-In that mode the sandboxes are local folders and the agents replay fixed command lists.
+### Option A: offline, no accounts (2 minutes)
+
+Sandboxes are local folders and the agents replay fixed command lists, so you can see
+the whole flow (fork tree, checks, verdicts, promotion) without any API keys.
+
+```bash
+CTRLZ_BACKEND=local CTRLZ_AGENT=scripted uv run ctrlz
+```
+
+### Option B: the real thing
+
+Copy `.env.example` to `.env.local` and fill in:
+
+| Variable | Needed? | Where to get it |
+|---|---|---|
+| `DAYTONA_API_KEY` | yes | [app.daytona.io](https://app.daytona.io) → API Keys |
+| `FIREWORKS_AI_API_KEY` | yes | [fireworks.ai](https://fireworks.ai) → API Keys |
+| `ARIZE_SPACE_ID`, `ARIZE_AI_API_KEY` | optional, for tracing | [app.arize.com](https://app.arize.com) → Space Settings |
+
+Then:
+
+```bash
+uv run python scripts/smoke_daytona.py   # optional: checks your Daytona account works
+uv run ctrlz
+```
+
+### Using the dashboard
+
+1. Open http://localhost:7860 (or set `PORT`) and click **Start production sandbox** (about 20 s).
+2. Keep the task or type your own, then click **Fork & run**. Expect 1–2 minutes.
+3. Click any branch to see its agent's commands, its checks and the judge's verdict, and to open that fork's live store on the left.
+4. Click **Promote to production** on a passing branch. The next task forks from the new production.
+
+Stopping the server deletes every sandbox it created (set `CTRLZ_KEEP_SANDBOXES=1` to keep them).
+Each run uses three short-lived sandboxes and a handful of model calls.
+
+To run once without the browser and print every agent's commands and verdicts:
+
+```bash
+uv run python scripts/run_once.py
+```
+
+### Settings
+
+| Variable | Default | Effect |
+|---|---|---|
+| `CTRLZ_SNAPSHOT` | `daytona-small` | Daytona snapshot. Use `daytona-vm-small` if your org has Linux VM sandboxes, to get native `sandbox.fork()` (disk + memory). |
+| `CTRLZ_MODEL` | `accounts/fireworks/routers/kimi-k3-fast` | Agent model (any Fireworks model with tool calling). |
+| `CTRLZ_JUDGE_MODEL` | same as agent | Judge model (needs JSON-schema output). |
+| `CTRLZ_MAX_TURNS` | `10` | Turn limit per agent. |
+| `ARIZE_PROJECT_NAME` | `ctrlz` | Arize project for traces. |
+
+### Adapting it to your own system
+
+Right now the "production" system is the demo store in `demo_app/`, and the checks in
+`src/ctrlz/check_script.py` and `src/ctrlz/evals.py` are written for it. To guard a
+different service: put its code in `demo_app/` (with a `seed.py` that sets up data and a
+`server.py` to run), then rewrite the checks to measure what must not break for it.
+The agent styles live in `PERSONAS` in `src/ctrlz/agent.py`.
+
+### Rebuilding the demo video
+
+`video/` is a [Remotion](https://remotion.dev) project. `video/tools/narrate.py` voices
+`video/script.md` with ElevenLabs (needs `ELEVENLABS_API_KEY`), `video/tools/record.py`
+records a live run with Playwright, and `video/tools/music.sh` builds the music bed from
+GarageBand's Apple Loops. Then `cd video && npm install && npm run render`.
 
 ## How it uses the sponsors
 

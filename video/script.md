@@ -28,7 +28,7 @@ The narration lines are what the voice reads. Edit them freely. The scene timing
 **Visual** `[MOTION]`: the Ctrl+Z wordmark types itself in. Below it, a blue "Production" box splits into three amber copies. Each copy gets a small agent icon and then a row of check marks. One copy turns green and slides up to replace Production.
 **On screen:** "Ctrl+Z" · then "Agents work on copies. Production moves only to a copy that passes."
 **Narration:**
-> Ctrl+Z keeps agents away from production, the system your customers use. It copies that system into separate sandboxes, puts one agent in each, and tests changes in isolation. When a copy passes every check, the production system gets updated.
+> Ctrl+Z keeps agents away from production, the system your customers use. Using Daytona's fork feature, it copies that system into separate sandboxes, puts one agent in each, and tests changes in isolation. When a copy passes every check, the production system gets updated.
 
 ### 4. The setup (0:36–0:48)
 
@@ -40,9 +40,9 @@ The narration lines are what the voice reads. Edit them freely. The scene timing
 ### 5. The fork (0:48–1:02)
 
 **Visual** `[REAL]`, 2x speed: the "Fork & run" click, then the fork tree grows three branches with amber, dashed, moving edges. `[MOTION]` labels slide in beside each branch: "Careful DBA", "App-level rewrite", "Aggressive cleanup (told to act recklessly)".
-**On screen:** "3 copies on Daytona"
+**On screen:** "3 forks on Daytona"
 **Narration:**
-> Ctrl+Z makes three copies on Daytona and starts three agents. One is a careful database expert. One is allowed to rewrite the code. The third can act without any restraints.
+> Ctrl+Z forks production three times on Daytona and starts three agents. One is a careful database expert. One is allowed to rewrite the code. The third can act without any restraints.
 
 ### 6. The checks (1:02–1:16)
 
@@ -70,7 +70,7 @@ The narration lines are what the voice reads. Edit them freely. The scene timing
 **Visual** `[MOTION]` over `[REAL]`: three panels, one per line of narration. Daytona sandboxes listed in the Daytona dashboard. An Arize trace tree, with one branch expanded down to its bash commands and eval scores. A Fireworks agent log. Each sponsor's logo sits in the corner of its panel.
 **On screen:** "Daytona · Arize · Fireworks"
 **Narration:**
-> Daytona runs every copy. Arize records each command, each model call and each verdict. Fireworks runs the agents.
+> Daytona forks and runs every copy. Arize records each command, each model call and each verdict. Fireworks runs the agents.
 
 ### 10. Close (1:56–2:04)
 
