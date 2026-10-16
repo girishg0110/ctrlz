@@ -126,3 +126,7 @@ src/ctrlz/
   web.py, static/    FastAPI + fork-tree dashboard
 scripts/smoke_daytona.py   checks an account can create, boot, fork and preview
 ```
+
+## License
+
+MIT. See [LICENSE](LICENSE).
